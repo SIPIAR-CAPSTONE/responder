@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.6.4",
+    "@joaosousa/react-native-progress-steps": "^0.4.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.11.0",
     "@supabase/supabase-js": "^2.44.1",
+    "@types/react": "~18.2.79",
     "expo": "~51.0.37",
     "expo-dev-client": "~4.0.28",
     "expo-file-system": "^17.0.1",
@@ -40,6 +42,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.2.0",
     "source-map-loader": "^5.0.0",
+    "typescript": "~5.3.3",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {

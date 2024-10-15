@@ -4,10 +4,10 @@
     "slug": "responder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/appIcon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashscreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,19 +15,32 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDQIelsuE4kYsRz73u1hJ7KjTPanJpiI4I"
+        }
+      },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/appIcon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.verseler.responder"
+      "package": "com.sipiar.responder"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/appIcon.png"
     },
     "extra": {
       "eas": {
         "projectId": "29cb0939-f35c-495e-9ae9-5dbc060db3df"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to change your profile picture."
+        }
+      ]  
+    ]
   }
 }
