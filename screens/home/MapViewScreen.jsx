@@ -1,6 +1,7 @@
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import MarkerDialog from "../../components/home/MarkerDialog";
 import useLocation from "../../hooks/useLocation";
@@ -8,7 +9,6 @@ import NotInternetAlert from "../../components/common/NoInternetAlert";
 import AppBar from "../../components/ui/AppBar";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import CircularIcon from "../../components/ui/CircularIcon";
-import { useNavigation } from "@react-navigation/native";
 
 const MapviewScreen = ({ route }) => {
   const navigation = useNavigation();
