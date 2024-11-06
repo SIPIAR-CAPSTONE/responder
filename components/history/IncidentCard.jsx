@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import { Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
@@ -6,14 +6,18 @@ import Button from "../ui/Button";
 import { createStyleSheet, useStyles } from "../../hooks/useStyles";
 import RouteConnectIcon from "./RouteConnectIcon";
 
-
 export default function IncidentCard({ id, date, fromAddress, toAddress }) {
   const { styles } = useStyles(stylesheet);
   const navigation = useNavigation();
 
   return (
     <View style={styles.card}>
-      <View style={styles.leftColumn}></View>
+      <View style={styles.leftColumn}>
+        <Image
+          source={require("../../assets/IncidentIcon.png")}
+          style={styles.leftIncidentIcon}
+        />
+      </View>
       <View style={styles.rightColumn}>
         <Text style={styles.id} variant="labelLarge">
           Incident ID: {id}
@@ -57,6 +61,11 @@ const stylesheet = createStyleSheet((theme) => ({
   },
   leftColumn: {
     width: 44,
+  },
+  leftIncidentIcon: {
+    height: 35,
+    width: 35,
+    marginTop: 8
   },
   rightColumn: {
     flex: 1,

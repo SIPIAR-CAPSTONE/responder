@@ -1,6 +1,6 @@
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import MarkerDialog from "../../components/home/MarkerDialog";
@@ -23,9 +23,12 @@ const MapviewScreen = ({ route }) => {
 
   //location of the user of the device
   const { userLocation } = useLocation();
-
-  const [selectedAlert, setSelectedAlert] = useState(null);
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const initialSelectedAlert = alerts.find(
+    (alert) => alert.id === selectedAlertId
+  );
+  //show alert dialog on marker click
+  const [selectedAlert, setSelectedAlert] = useState(initialSelectedAlert);
+  const [isDialogVisible, setIsDialogVisible] = useState(true);
   const showDialog = (alert) => {
     setIsDialogVisible(true);
     setSelectedAlert(alert);
@@ -39,14 +42,14 @@ const MapviewScreen = ({ route }) => {
   };
 
   const alertMarkers = alerts.map((alert) => {
-    const pinColor = alert.id === selectedAlertId ? "green" : "red";
     return (
       <Marker
         key={alert.id}
         onPress={() => showDialog(alert)}
         coordinate={{ ...alert.coordinate }}
-        pinColor={pinColor}
-      />
+      >
+        <Image source={require("../../assets/MapPin.png")} style={styles.pin} />
+      </Marker>
     );
   });
 
@@ -90,6 +93,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     flex: 1,
+  },
+  pin: {
+    width: 45,
+    height: 45,
   },
 });
 

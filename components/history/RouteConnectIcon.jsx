@@ -1,20 +1,18 @@
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function RouteConnectIcon() {
-  const { styles, theme } = useStyles(stylesheet);
+  const { styles } = useStyles(stylesheet);
 
   return (
     <View style={styles.container}>
-      <FontAwesome6
-        name="location-dot"
-        size={26}
-        color={theme.colors.primary}
+      <Image
+        source={require("../../assets/MapPin.png")}
+        style={styles.mapPin}
       />
       <BrokenVerticalLine />
-      <MaterialIcons name="my-location" size={24} color="#3300FF" />
+      <MaterialIcons name="my-location" size={24} color="blue" />
     </View>
   );
 }
@@ -35,10 +33,15 @@ const BrokenVerticalLine = () => {
 
 const stylesheet = createStyleSheet((theme) => ({
   container: {
-    width: 28,
-    marginEnd: theme.spacing.xxs,
+    width: 30,
+    marginEnd: theme.spacing.xxxs,
     minHeight: 70,
     alignItems: "center",
+  },
+  mapPin: {
+    height: 25,
+    width: 35,
+    marginRight: 2,
   },
   lineGap: {
     flex: 1,
