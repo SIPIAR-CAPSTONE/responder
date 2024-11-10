@@ -15,10 +15,11 @@ import useBoundStore from "./zustand/useBoundStore";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const isAuthenticated = false; //!temp
   const currentThemeScheme = useBoundStore((state) => state.currentThemeScheme);
   const setThemeScheme = useBoundStore((state) => state.setThemeScheme);
   const selectedTheme = currentThemeScheme === "light" ? lightTheme : darkTheme;
+  const globalStateEncryptedSession = useBoundStore((state) => state.session);
+
 
   useEffect(() => {
     const initThemeCheck = async () => {
@@ -41,7 +42,7 @@ export default function App() {
         <PaperProvider theme={selectedTheme}>
           <NavigationContainer>
             <Stack.Navigator screenOptions={screenOptions}>
-              {!isAuthenticated ? SignedOutStack : SignedInStack }
+              {globalStateEncryptedSession ? SignedInStack : SignedOutStack}
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>

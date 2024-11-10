@@ -9,6 +9,7 @@ import Form from "../../components/common/Form";
 import Layout from "../../components/common/Layout";
 import SuccessConfirmation from "../../components/common/SuccessConfirmation";
 import { isFormValid } from "../../utils/formValidation";
+import { supabase } from "../../utils/supabase/config";
 
 const fields = [
   {
@@ -38,7 +39,26 @@ const ResetPasswordScreen = () => {
   const form = { newPassword, confirmNewPassword };
 
   const handleSubmit = async () => {
-    console.log("reset password");
+    if (isFormValid(fields, form, setErrors)) {
+      setLoading(true);
+
+      //* update password of user
+      const { error } = await supabase.auth
+        .updateUser({
+          password: newPassword,
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+
+      if (error) {
+        let errors = {};
+        errors.confirmNewPassword = error.message;
+        setErrors(errors);
+      } else if (!error) {
+        setShowSuccessAlert(true);
+      }
+    }
   };
 
   return (

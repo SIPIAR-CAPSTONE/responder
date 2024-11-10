@@ -6,6 +6,9 @@ import Form from "../../components/common/Form";
 import FormHeader from "../../components/common/FormHeader";
 import Button from "../../components/ui/Button";
 import { isFormValid } from "../../utils/formValidation";
+import useBoundStore from "../../zustand/useBoundStore";
+import { supabase } from "../../utils/supabase/config";
+import useSendToken from "../../hooks/useSendToken";
 
 const fields = [
   { name: "email", rules: [{ type: "required" }, { type: "email" }] },
@@ -14,10 +17,39 @@ const fields = [
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const { errors, setErrors, process } = useSendToken(email, true); // Hook for sending password reset token
+  const setResetEmail = useBoundStore((state) => state.setPasswordResetEmail);
   const form = { email };
 
+
   const handleSubmit = async () => {
-    console.log("change pass");
+    // Add email as a global prop
+    setResetEmail(email);
+
+    if (isFormValid(fields, form, setErrors)) {
+      setLoading(true);
+
+      try {
+        const { data } = await supabase
+          .from("responder")
+          .select()
+          .eq("email", email);
+
+        // Check if data is an array and has at least one element
+        if (Array.isArray(data) && data.length > 0) {
+          process(); // Call the process function from the useSendToken hook for sending token to the provided email
+        } else {
+          let errors = {};
+          errors.email = "Account not found.";
+          setErrors(errors);
+        }
+      } catch (error) {
+        const errorMessage = { email: `Server Error: ${error.message}` };
+        setErrors(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
@@ -33,7 +65,7 @@ const ForgotPasswordScreen = () => {
           value={email}
           inputMode="email"
           onChangeText={setEmail}
-          // error={errors.email}
+          error={errors.email}
           disabled={loading}
         />
         <Button
