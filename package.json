@@ -34,6 +34,8 @@
     "react-native": "0.74.5",
     "react-native-android-location-enabler": "^2.0.1",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-circular-progress": "^1.4.0",
+    "react-native-date-picker": "^5.0.4",
     "react-native-maps": "1.14.0",
     "react-native-paper": "^5.12.3",
     "react-native-reanimated": "~3.10.1",
