@@ -55,7 +55,7 @@ const IncidentReportScreen = () => {
       id: 2,
       content: (
         <Content>
-          <StepTwoContent />
+          <StepTwoContent goNextStep={goNextStep} />
         </Content>
       ),
     },

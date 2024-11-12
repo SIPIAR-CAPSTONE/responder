@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
 
 import Form from "../../common/Form";
 import FormHeader from "../../common/FormHeader";
@@ -30,7 +28,7 @@ const fields = [
   },
 ];
 
-const StepTwoContent = () => {
+const StepTwoContent = ({ goNextStep }) => {
   const { theme } = useStyles(stylesheet);
 
   const IRForm = useBoundStore((state) => state.incidentReportForm);
