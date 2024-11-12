@@ -1,10 +1,10 @@
 import Layout from "../../components/common/Layout";
-import EmergencyAlerts from "../../components/home/EmergencyAlerts";
 import AppBar from "../../components/ui/AppBar";
 import CircularIcon from "../../components/ui/CircularIcon";
 import LogoTitle from "../../components/navigation/LogoTitle";
-import AssignedEmergencyAlert from "../../components/home/AssignedEmergencyAlert";
 import { useNavigation } from "@react-navigation/native";
+import AssignedEmergencyAlert from "../../components/home/AssginedEmergencyAlert";
+import { Text } from "react-native-paper";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -14,7 +14,7 @@ const HomeScreen = () => {
       <LogoTitle />
       <CircularIcon
         name="notifications"
-        onPress={() => navigation.navigate("Notification")}
+        onPress={() => navigation.navigate("NotificationScreen")}
       />
     </AppBar>
   );
@@ -22,12 +22,19 @@ const HomeScreen = () => {
   return (
     <Layout
       scrollable
-      removeDefaultPaddingHorizontal
       AppbarComponent={CustomAppBar}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
+      <Text
+        variant="titleMedium"
+        style={{
+          marginTop: 16,
+          marginBottom: 10,
+        }}
+      >
+        Assigned Emergency Request
+      </Text>
       <AssignedEmergencyAlert />
-      <EmergencyAlerts />
     </Layout>
   );
 };
