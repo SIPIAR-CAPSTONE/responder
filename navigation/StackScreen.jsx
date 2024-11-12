@@ -6,7 +6,7 @@ import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
 import ResetPasswordScreen from "../screens/auth/ResetPasswordScreen";
 import TokenVerificationScreen from "../screens/auth/TokenVerificationScreen";
 import NotificationScreen from "../screens/home/NotificationScreen";
-import MapViewScreen from "../screens/broadcast/MapViewScreen";
+import MapViewScreen from "../screens/home/MapViewScreen";
 import MyAccountScreen from "../screens/profile/myAccount/MyAccountScreen";
 import EditProfileScreen from "../screens/profile/myAccount/EditProfileScreen";
 import EditPasswordScreen from "../screens/profile/myAccount/EditPasswordScreen";
