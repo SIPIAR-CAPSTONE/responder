@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/home/HomeScreen";
-import BroadcastScreen from "../screens/broadcast/BroadcastScreen";
 import HistoryScreen from "../screens/history/HistoryScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 import TabBarIcon from "../components/navigation/TabBarIcon";
@@ -33,15 +32,6 @@ const Tabs = () => {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        }}
-      />
-      <Tab.Screen
-        name="BroadcastScreen"
-        component={BroadcastScreen}
-        options={{
-          title: "Broadcast",
-          headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
         }}
       />
       <Tab.Screen
