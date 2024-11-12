@@ -28,7 +28,7 @@ const IncidentReportScreen = () => {
   const showConfirmationDialog = () => setIsConfirmationDialogVisible(true);
   const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
 
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(0);
   const resetIRFrom = useBoundStore((state) => state.resetIncidentReport);
 
   const goNextStep = () =>
