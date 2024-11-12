@@ -73,6 +73,7 @@ const StepTwoContent = () => {
         <Button
           label="Stable"
           variant="outlined"
+          rippleColor="#d0f9c5"
           style={[
             styles.toggleButton,
             IRForm.condition === "stable"
