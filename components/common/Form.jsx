@@ -1,12 +1,22 @@
 import { ScrollView } from "react-native";
 import { createStyleSheet, useStyles } from "../../hooks/useStyles";
 
-const Form = ({ style, contentContainerStyle, children, ...props }) => {
+const Form = ({
+  style,
+  contentContainerStyle,
+  removeDefaultPaddingHorizontal,
+  children,
+  ...props
+}) => {
   const { styles } = useStyles(stylesheet);
 
   return (
     <ScrollView
-      style={[styles.form, style]}
+      style={[
+        styles.form,
+        removeDefaultPaddingHorizontal && { paddingHorizontal: 0 },
+        style,
+      ]}
       contentContainerStyle={[styles.formContent, contentContainerStyle]}
       {...props}
     >

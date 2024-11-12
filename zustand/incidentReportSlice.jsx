@@ -1,13 +1,12 @@
 const DEFAULT_INCIDENT_REPORT_FORM = {
-  name: "",
-  address: "",
-  age: null,
-  gender: "male",
-  heartRate: null,
-  bloodPressure: null,
-  medicalHistory: "",
-  medications: "",
-  assessment: "",
+  location: "",
+  barangay: "",
+  landmark: "",
+  date: new Date(),
+  bystanderName: "",
+  phone: null,
+  emergencyType: "Medical: Cardiac Arrest",
+  remarks: "",
   condition: "not stable",
 };
 

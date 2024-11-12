@@ -11,11 +11,12 @@ import CircularIcon from "../../components/ui/CircularIcon";
 
 import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
 import useBoundStore from "../../zustand/useBoundStore";
-const StepOneContent = lazy(() =>
-  import("../../components/history/incidentReport/StepOneContent")
-);
+import StepOneContent from "../../components/history/incidentReport/StepOneContent";
 const StepTwoContent = lazy(() =>
   import("../../components/history/incidentReport/StepTwoContent")
+);
+const StepThreeContent = lazy(() =>
+  import("../../components/history/incidentReport/StepThreeContent")
 );
 
 const IncidentReportScreen = () => {
@@ -27,7 +28,7 @@ const IncidentReportScreen = () => {
   const showConfirmationDialog = () => setIsConfirmationDialogVisible(true);
   const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(2);
   const resetIRFrom = useBoundStore((state) => state.resetIncidentReport);
 
   const goNextStep = () =>
@@ -55,6 +56,14 @@ const IncidentReportScreen = () => {
       content: (
         <Content>
           <StepTwoContent />
+        </Content>
+      ),
+    },
+    {
+      id: 3,
+      content: (
+        <Content>
+          <StepThreeContent />
         </Content>
       ),
     },

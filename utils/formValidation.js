@@ -8,14 +8,14 @@ const validateFields = (fields, values) => {
         errors[name] = rule.message || `${name} is required.`;
       }
 
-      if (rule.type === "minLength" && value.length < rule.length) {
+      if (rule.type === "minLength" && value?.length < rule?.length) {
         errors[name] =
-          rule.message || `${name} must be at least ${rule.length} characters.`;
+          rule.message || `${name} must be at least ${rule?.length} characters.`;
       }
 
-      if (rule.type === "exactLength" && value.length !== rule.length) {
+      if (rule.type === "exactLength" && value?.length !== rule?.length) {
         errors[name] =
-          rule.message || `${name} should have ${rule.length} numbers.`;
+          rule.message || `${name} should have ${rule?.length} numbers.`;
       }
       if (rule.type === "email" && !/\S+@\S+\.\S+/.test(value)) {
         errors[name] = "Invalid Email";

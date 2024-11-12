@@ -10,17 +10,28 @@ import Button from "../../ui/Button";
 import SectionTitle from "./SectionTitle";
 import useBoundStore from "../../../zustand/useBoundStore";
 import { isFormValid } from "../../../utils/formValidation";
-import SuccessConfirmation from "../../common/SuccessConfirmation";
 
 const fields = [
-  { name: "assessment", rules: [{ type: "required" }] },
-  { name: "condition", rules: [{ type: "required" }] },
+  {
+    name: "bystanderName",
+    rules: [{ type: "required", message: "Bystander name is required." }],
+  },
+  {
+    name: "phone",
+    rules: [
+      { type: "required" },
+      { type: "validPhNumber" },
+      {
+        type: "exactLength",
+        length: 11,
+        message: "Phone number should be exactly 11 digits long.",
+      },
+    ],
+  },
 ];
 
 const StepTwoContent = () => {
-  const { styles, theme } = useStyles(stylesheet);
-  const navigation = useNavigation();
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const { theme } = useStyles(stylesheet);
 
   const IRForm = useBoundStore((state) => state.incidentReportForm);
   const setIRForm = useBoundStore((state) => state.setIncidentReport);
@@ -28,69 +39,37 @@ const StepTwoContent = () => {
 
   const handleSubmit = () => {
     if (isFormValid(fields, IRForm, setErrors)) {
-      console.log("submitted"); //!remove later
-      setShowSuccessAlert(true);
+      goNextStep();
     }
   };
 
   return (
-    <Form removeDefaultPaddingBottom>
+    <Form removeDefaultPaddingBottom removeDefaultPaddingHorizontal>
       <FormHeader
         title="Oakridge, 28 Oakwood Court"
         date="Thursday, May 15, 2024"
         id="2021300657"
       />
-      <SectionTitle title="Assessment" />
+      <SectionTitle title="Requestor Information" />
       <TextInput
-        placeholder="Type here..."
-        value={IRForm.assessment}
-        onChangeText={(value) => setIRForm("assessment", value)}
-        error={errors.assessment}
-        style={[styles.textArea, errors.textArea && styles.textAreaError]}
-        multiline
-        textAlignVertical="top"
+        label="Bystander Name"
+        value={IRForm.bystanderName}
+        onChangeText={(value) => setIRForm("bystanderName", value)}
+        error={errors.bystanderName}
+        variant="outlined"
       />
-
-      <SectionTitle title="Conditions" />
-      <View style={styles.toggleWrapper}>
-        <Button
-          label="Not Stable"
-          variant="outlined"
-          style={[
-            styles.toggleButton,
-            IRForm.condition !== "not stable" && styles.inactiveToggleButton,
-          ]}
-          labelStyle={
-            IRForm.condition !== "not stable" && styles.inactiveToggleLabel
-          }
-          onPress={() => setIRForm("condition", "not stable")}
-        />
-        <Button
-          label="Stable"
-          variant="outlined"
-          style={[
-            styles.toggleButton,
-            IRForm.condition !== "stable" && styles.inactiveToggleButton,
-          ]}
-          labelStyle={
-            IRForm.condition !== "stable" && styles.inactiveToggleLabel
-          }
-          onPress={() => setIRForm("condition", "stable")}
-        />
-      </View>
-
+      <TextInput
+        label="Phone Number"
+        type="numeric"
+        value={IRForm.phone}
+        onChangeText={(value) => setIRForm("phone", value)}
+        error={errors.phone}
+        variant="outlined"
+      />
       <Button
-        label="Create"
+        label="Next"
         marginVertical={theme.spacing.xxl}
         onPress={handleSubmit}
-      />
-
-      <SuccessConfirmation
-        open={showSuccessAlert}
-        setOpen={setShowSuccessAlert}
-        title="Submitted Successfully!"
-        desc="The incident report has been submitted successfully!"
-        onDelayEnd={() => navigation.navigate("HistoryScreen")}
       />
     </Form>
   );
