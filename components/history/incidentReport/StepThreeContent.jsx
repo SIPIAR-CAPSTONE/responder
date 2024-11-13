@@ -52,7 +52,7 @@ const StepTwoContent = () => {
         variant="outlined"
       />
 
-      <SectionTitle title="Conditions" />
+      <SectionTitle title="Condition" />
       <View style={styles.toggleWrapper}>
         <Button
           label="Not Stable"

@@ -11,7 +11,7 @@ import useBoundStore from "../../../zustand/useBoundStore";
 import DateTimePicker from "../../ui/DateTimePicker";
 
 const fields = [
-  { name: "location", rules: [{ type: "required" }] },
+  { name: "address", rules: [{ type: "required" }] },
   { name: "barangay", rules: [{ type: "required" }] },
   { name: "landmark", rules: [{ type: "required" }] },
   { name: "date", rules: [{ type: "required" }] },
@@ -41,10 +41,10 @@ const StepOneContent = ({ goNextStep }) => {
       />
       <SectionTitle title="Incident Details" />
       <TextInput
-        label="Location"
-        value={IRForm.location}
-        onChangeText={(value) => setIRForm("location", value)}
-        error={errors.location}
+        label="Address"
+        value={IRForm.address}
+        onChangeText={(value) => setIRForm("address", value)}
+        error={errors.address}
         variant="outlined"
       />
       <TextInput
@@ -65,9 +65,10 @@ const StepOneContent = ({ goNextStep }) => {
         label="Emergency Type"
         value={IRForm.emergencyType}
         onChangeText={(value) => setIRForm("emergencyType", value)}
+        disabled
         error={errors.emergencyType}
         defaultValue="Medical: Cardiac Arrest"
-        variant="outlined"
+        variant="disabled"
       />
       <DateTimePicker
         label="Date"
