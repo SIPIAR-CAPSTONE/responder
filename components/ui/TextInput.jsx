@@ -5,6 +5,7 @@ import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 
 const TextInput = ({
   value,
+  defaultValue,
   onChangeText,
   type,
   placeholder,
@@ -29,6 +30,7 @@ const TextInput = ({
         </Text>
       )}
       <RNTextInput
+        defaultValue={defaultValue}
         editable={!disabled}
         placeholder={placeholder}
         placeholderTextColor={theme.colors.text2}
@@ -128,7 +130,7 @@ const stylesheet = createStyleSheet((theme) => ({
     top: 1,
   },
   label: {
-    color: theme.colors.text3,
+    color: theme.colors.text,
     fontWeight: "500",
     marginBottom: 8,
 

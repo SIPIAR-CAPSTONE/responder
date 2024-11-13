@@ -11,11 +11,12 @@ import CircularIcon from "../../components/ui/CircularIcon";
 
 import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
 import useBoundStore from "../../zustand/useBoundStore";
-const StepOneContent = lazy(() =>
-  import("../../components/history/incidentReport/StepOneContent")
-);
+import StepOneContent from "../../components/history/incidentReport/StepOneContent";
 const StepTwoContent = lazy(() =>
   import("../../components/history/incidentReport/StepTwoContent")
+);
+const StepThreeContent = lazy(() =>
+  import("../../components/history/incidentReport/StepThreeContent")
 );
 
 const IncidentReportScreen = () => {
@@ -54,7 +55,15 @@ const IncidentReportScreen = () => {
       id: 2,
       content: (
         <Content>
-          <StepTwoContent />
+          <StepTwoContent goNextStep={goNextStep} />
+        </Content>
+      ),
+    },
+    {
+      id: 3,
+      content: (
+        <Content>
+          <StepThreeContent />
         </Content>
       ),
     },

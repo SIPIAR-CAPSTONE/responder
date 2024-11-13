@@ -39,9 +39,8 @@ const stylesheet = createStyleSheet((theme) => ({
     alignItems: "center",
   },
   mapPin: {
-    height: 25,
-    width: 35,
-    marginRight: 2,
+    height: 22,
+    width: 22,
   },
   lineGap: {
     flex: 1,
