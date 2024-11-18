@@ -22,7 +22,7 @@ const fields = [
       {
         type: "exactLength",
         length: 11,
-        message: "Phone number should be exactly 11 digits long.",
+        message: "Contact number should be exactly 11 digits long.",
       },
     ],
   },
@@ -57,7 +57,7 @@ const StepTwoContent = ({ goNextStep }) => {
         variant="outlined"
       />
       <TextInput
-        label="Phone Number"
+        label="Contact Number"
         type="numeric"
         value={IRForm.phone}
         onChangeText={(value) => setIRForm("phone", value)}
