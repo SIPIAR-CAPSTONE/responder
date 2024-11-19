@@ -48,7 +48,7 @@ export const createAuthSlice = (set) => ({
   },
   restoreSession: async () => {
     const { data } = await supabase.auth.getSession();
-    if (data) {
+    if (data && data.session) {
       set({ session: data.session });
       set({
         userMetaData: {
