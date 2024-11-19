@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { lazy } from "react";
 
 import HomeScreen from "../screens/home/HomeScreen";
-import HistoryScreen from "../screens/history/HistoryScreen";
-import ProfileScreen from "../screens/profile/ProfileScreen";
+const HistoryScreen = lazy(() => import("../screens/history/HistoryScreen"));
+const ProfileScreen = lazy(() => import("../screens/profile/ProfileScreen"));
 import TabBarIcon from "../components/navigation/TabBarIcon";
 import { createStyleSheet, useStyles } from "../hooks/useStyles";
 
