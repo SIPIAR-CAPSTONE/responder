@@ -1,17 +1,36 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { lazy } from "react";
 
 import BottomTab from "./BottomTab";
 import LoginScreen from "../screens/auth/LoginScreen";
-import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
-import ResetPasswordScreen from "../screens/auth/ResetPasswordScreen";
-import TokenVerificationScreen from "../screens/auth/TokenVerificationScreen";
-import NotificationScreen from "../screens/home/NotificationScreen";
-import MapViewScreen from "../screens/home/MapViewScreen";
-import MyAccountScreen from "../screens/profile/myAccount/MyAccountScreen";
-import EditProfileScreen from "../screens/profile/myAccount/EditProfileScreen";
-import EditPasswordScreen from "../screens/profile/myAccount/EditPasswordScreen";
-import SettingsScreen from "../screens/profile/settings/SettingsScreen";
-import IncidentReportScreen from "../screens/history/IncidentReportScreen";
+const ForgotPasswordScreen = lazy(() =>
+  import("../screens/auth/ForgotPasswordScreen")
+);
+const ResetPasswordScreen = lazy(() =>
+  import("../screens/auth/ResetPasswordScreen")
+);
+const TokenVerificationScreen = lazy(() =>
+  import("../screens/auth/TokenVerificationScreen")
+);
+const NotificationScreen = lazy(() =>
+  import("../screens/home/NotificationScreen")
+);
+const MapViewScreen = lazy(() => import("../screens/home/MapViewScreen"));
+const MyAccountScreen = lazy(() =>
+  import("../screens/profile/myAccount/MyAccountScreen")
+);
+const EditProfileScreen = lazy(() =>
+  import("../screens/profile/myAccount/EditProfileScreen")
+);
+const EditPasswordScreen = lazy(() =>
+  import("../screens/profile/myAccount/EditPasswordScreen")
+);
+const SettingsScreen = lazy(() =>
+  import("../screens/profile/settings/SettingsScreen")
+);
+const IncidentReportScreen = lazy(() =>
+  import("../screens/history/IncidentReportScreen")
+);
 
 const Stack = createNativeStackNavigator();
 
