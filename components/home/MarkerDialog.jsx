@@ -5,6 +5,7 @@ import { getTimeGap, getDistanceGap } from "../../utils/calculateGap";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 import InfoField from "./InfoField";
 import moment from "moment";
+import { Linking } from "react-native";
 
 const EMPTY_PLACEHOLDER = " - ";
 
@@ -58,6 +59,18 @@ const MarkerDialog = ({
     [selectedMarker?.createdAt]
   );
 
+  const onOpenMap = () => {
+    const originLat = userLocation?.latitude;
+    const originLng = userLocation?.longitude;
+    const origin = `${originLat},${originLng}`;
+    const destinationLat = selectedMarker?.coordinate?.latitude;
+    const destinationLng = selectedMarker?.coordinate?.longitude;
+    const destination = `${destinationLat},${destinationLng}`;
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
+
+    Linking.openURL(url);
+  };
+
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={hideDialog}>
@@ -96,7 +109,10 @@ const MarkerDialog = ({
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={hideDialog} mode="text" rippleColor="rgba(0,0,0,0)">
-            close
+            Close
+          </Button>
+          <Button onPress={onOpenMap} mode="contained" style={styles.button}>
+            Directions
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -112,7 +128,11 @@ const stylesheet = createStyleSheet((theme) => ({
     fontSize: theme.fontSize.lg,
   },
   infoFieldsContainer: {
-    marginTop: theme.spacing.xxs,
+    marginVertical: theme.spacing.xxs,
     rowGap: theme.spacing.xs,
+  },
+  button: {
+    borderRadius: theme.borderRadius.base,
+    width: 110,
   },
 }));
