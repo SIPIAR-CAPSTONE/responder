@@ -21,6 +21,7 @@ export const createAuthSlice = (set) => ({
   signupForm: DEFAULT_SIGNUP_FORM,
   signupCurrentStep: 0,
   userMetaData: {
+    id: '',
     firstName: '',
     middleName: '',
     lastName: '',
