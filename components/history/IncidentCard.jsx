@@ -53,6 +53,8 @@ export default function IncidentCard({
       phone: phone_number,
       remarks: remarks,
       condition: condition,
+      emergency_type: "Medical: Cardiac Arrest",
+      bystanderName: `${first_name} ${last_name}`
     })
   }
 
