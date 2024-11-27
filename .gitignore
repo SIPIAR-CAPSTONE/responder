@@ -36,3 +36,6 @@ yarn-error.*
 
 # Variables
 .env
+
+# JSON formatter
+jsonformatter

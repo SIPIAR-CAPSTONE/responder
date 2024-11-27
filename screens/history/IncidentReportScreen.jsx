@@ -1,46 +1,49 @@
-import { useEffect, lazy, useState } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
-import ProgressSteps, { Content } from "@joaosousa/react-native-progress-steps";
-import { useNavigation } from "@react-navigation/native";
+import { useEffect, lazy, useState } from 'react'
+import { View } from 'react-native'
+import { Text } from 'react-native-paper'
+import ProgressSteps, { Content } from '@joaosousa/react-native-progress-steps'
+import { useNavigation, useRoute } from '@react-navigation/native'
 
-import Layout from "../../components/common/Layout";
-import { createStyleSheet, useStyles } from "../../hooks/useStyles";
-import AppBar from "../../components/ui/AppBar";
-import CircularIcon from "../../components/ui/CircularIcon";
+import Layout from '../../components/common/Layout'
+import { createStyleSheet, useStyles } from '../../hooks/useStyles'
+import AppBar from '../../components/ui/AppBar'
+import CircularIcon from '../../components/ui/CircularIcon'
 
-import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
-import useBoundStore from "../../zustand/useBoundStore";
-import StepOneContent from "../../components/history/incidentReport/StepOneContent";
+import ConfirmationDialog from '../../components/ui/ConfirmationDialog'
+import useBoundStore from '../../zustand/useBoundStore'
+import StepOneContent from '../../components/history/incidentReport/StepOneContent'
 const StepTwoContent = lazy(() =>
-  import("../../components/history/incidentReport/StepTwoContent")
-);
+  import('../../components/history/incidentReport/StepTwoContent'),
+)
 const StepThreeContent = lazy(() =>
-  import("../../components/history/incidentReport/StepThreeContent")
-);
+  import('../../components/history/incidentReport/StepThreeContent'),
+)
 
 const IncidentReportScreen = () => {
-  const { styles, theme } = useStyles(stylesheet);
-  const navigation = useNavigation();
-  const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] =
-    useState(false);
 
-  const showConfirmationDialog = () => setIsConfirmationDialogVisible(true);
-  const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
+  const { styles, theme } = useStyles(stylesheet)
+  const navigation = useNavigation()
+  const [
+    isConfirmationDialogVisible,
+    setIsConfirmationDialogVisible,
+  ] = useState(false)
 
-  const [currentStep, setCurrentStep] = useState(0);
-  const resetIRFrom = useBoundStore((state) => state.resetIncidentReport);
+  const showConfirmationDialog = () => setIsConfirmationDialogVisible(true)
+  const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false)
+
+  const [currentStep, setCurrentStep] = useState(0)
+  const resetIRFrom = useBoundStore((state) => state.resetIncidentReport)
 
   const goNextStep = () =>
-    setCurrentStep((prevCurrentStep) => prevCurrentStep + 1);
+    setCurrentStep((prevCurrentStep) => prevCurrentStep + 1)
 
   const goBackStep = () => {
     if (currentStep > 0) {
-      setCurrentStep((prevCurrentStep) => prevCurrentStep - 1);
+      setCurrentStep((prevCurrentStep) => prevCurrentStep - 1)
     } else {
-      showConfirmationDialog();
+      showConfirmationDialog()
     }
-  };
+  }
 
   const steps = [
     {
@@ -67,7 +70,7 @@ const IncidentReportScreen = () => {
         </Content>
       ),
     },
-  ];
+  ]
 
   const customColors = {
     marker: {
@@ -82,7 +85,7 @@ const IncidentReportScreen = () => {
         completed: theme.colors.primary,
       },
     },
-  };
+  }
 
   /**
    * This effect is triggered whenever the signup screen is focused.
@@ -92,11 +95,11 @@ const IncidentReportScreen = () => {
    *
    */
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      resetIRFrom();
-    });
-    return unsubscribe;
-  }, [navigation]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      resetIRFrom()
+    })
+    return unsubscribe
+  }, [navigation])
 
   const CustomAppBar = () => (
     <AppBar style={styles.appBar}>
@@ -106,7 +109,7 @@ const IncidentReportScreen = () => {
       {/* invisible element, just to make the title center */}
       <View style={{ width: 30 }} />
     </AppBar>
-  );
+  )
 
   return (
     <Layout
@@ -132,10 +135,10 @@ const IncidentReportScreen = () => {
         onPressCancel={hideConfirmationDialog}
       />
     </Layout>
-  );
-};
+  )
+}
 
-export default IncidentReportScreen;
+export default IncidentReportScreen
 
 const stylesheet = createStyleSheet((theme) => ({
   appBar: {
@@ -143,7 +146,7 @@ const stylesheet = createStyleSheet((theme) => ({
   },
   appBarTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: theme.colors.text,
   },
   container: {
@@ -152,4 +155,4 @@ const stylesheet = createStyleSheet((theme) => ({
   content: {
     paddingHorizontal: theme.spacing.base,
   },
-}));
+}))

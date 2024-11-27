@@ -8,6 +8,7 @@ const useUserMetadata = () => {
   const setState = (session) => {
     try {
       setUserMetaData({
+        id: session['user']['id'],
         firstName: session['user']['user_metadata']['first_name'],
         middleName: session['user']['user_metadata']['middle_name'],
         lastName: session['user']['user_metadata']['last_name'],

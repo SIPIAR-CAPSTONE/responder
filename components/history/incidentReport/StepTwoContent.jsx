@@ -1,45 +1,50 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import Form from "../../common/Form";
-import FormHeader from "../../common/FormHeader";
-import TextInput from "../../ui/TextInput";
-import { useStyles, createStyleSheet } from "../../../hooks/useStyles";
-import Button from "../../ui/Button";
-import SectionTitle from "./SectionTitle";
-import useBoundStore from "../../../zustand/useBoundStore";
-import { isFormValid } from "../../../utils/formValidation";
+import Form from '../../common/Form'
+import FormHeader from '../../common/FormHeader'
+import TextInput from '../../ui/TextInput'
+import { useStyles, createStyleSheet } from '../../../hooks/useStyles'
+import Button from '../../ui/Button'
+import SectionTitle from './SectionTitle'
+import useBoundStore from '../../../zustand/useBoundStore'
+import { isFormValid } from '../../../utils/formValidation'
 
 const fields = [
   {
-    name: "bystanderName",
-    rules: [{ type: "required", message: "Bystander name is required." }],
+    name: 'bystanderName',
+    rules: [{ type: 'required', message: 'Bystander name is required.' }],
   },
   {
-    name: "phone",
+    name: 'phone',
     rules: [
-      { type: "required" },
-      { type: "validPhNumber" },
+      { type: 'required' },
+      { type: 'validPhNumber' },
       {
-        type: "exactLength",
+        type: 'exactLength',
         length: 11,
-        message: "Contact number should be exactly 11 digits long.",
+        message: 'Contact number should be exactly 11 digits long.',
       },
     ],
   },
-];
+]
 
 const StepTwoContent = ({ goNextStep }) => {
-  const { theme } = useStyles(stylesheet);
+  const { theme } = useStyles(stylesheet)
 
-  const IRForm = useBoundStore((state) => state.incidentReportForm);
-  const setIRForm = useBoundStore((state) => state.setIncidentReport);
-  const [errors, setErrors] = useState({});
+  const IRForm = useBoundStore((state) => state.incidentReportForm)
+  const setIRForm = useBoundStore((state) => state.setIncidentReport)
+  const [errors, setErrors] = useState({})
+
+  const handleFieldChange = (key, newValue) => {
+    setIRForm({ [key]: newValue });
+  }
 
   const handleSubmit = () => {
     if (isFormValid(fields, IRForm, setErrors)) {
-      goNextStep();
+      goNextStep()
+      console.log('success2');
     }
-  };
+  }
 
   return (
     <Form removeDefaultPaddingBottom removeDefaultPaddingHorizontal>
@@ -52,7 +57,7 @@ const StepTwoContent = ({ goNextStep }) => {
       <TextInput
         label="Bystander Name"
         value={IRForm.bystanderName}
-        onChangeText={(value) => setIRForm("bystanderName", value)}
+        onChangeText={(value) => handleFieldChange('bystanderName', value)}
         error={errors.bystanderName}
         variant="outlined"
       />
@@ -60,7 +65,7 @@ const StepTwoContent = ({ goNextStep }) => {
         label="Contact Number"
         type="numeric"
         value={IRForm.phone}
-        onChangeText={(value) => setIRForm("phone", value)}
+        onChangeText={(value) => handleFieldChange('phone', value)}
         error={errors.phone}
         variant="outlined"
       />
@@ -70,10 +75,10 @@ const StepTwoContent = ({ goNextStep }) => {
         onPress={handleSubmit}
       />
     </Form>
-  );
-};
+  )
+}
 
-export default StepTwoContent;
+export default StepTwoContent
 
 const stylesheet = createStyleSheet((theme) => ({
   textArea: {
@@ -86,7 +91,7 @@ const stylesheet = createStyleSheet((theme) => ({
     borderColor: theme.colors.primary,
   },
   toggleWrapper: {
-    flexDirection: "row",
+    flexDirection: 'row',
     columnGap: theme.spacing.sm,
   },
   toggleButton: {
@@ -98,4 +103,4 @@ const stylesheet = createStyleSheet((theme) => ({
   inactiveToggleLabel: {
     color: theme.colors.text,
   },
-}));
+}))
