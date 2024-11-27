@@ -1,77 +1,65 @@
-import { useState } from 'react'
+import { useState } from "react";
+import moment from "moment";
 
-import Button from '../../ui/Button'
-import { useStyles, createStyleSheet } from '../../../hooks/useStyles'
-import TextInput from '../../ui/TextInput'
-import Form from '../../common/Form'
-import { isFormValid } from '../../../utils/formValidation'
-import FormHeader from '../../common/FormHeader'
-import SectionTitle from './SectionTitle'
-import useBoundStore from '../../../zustand/useBoundStore'
-import DateTimePicker from '../../ui/DateTimePicker'
-import moment from 'moment'
+import Button from "../../ui/Button";
+import { useStyles, createStyleSheet } from "../../../hooks/useStyles";
+import TextInput from "../../ui/TextInput";
+import Form from "../../common/Form";
+import { isFormValid } from "../../../utils/formValidation";
+import FormHeader from "../../common/FormHeader";
+import SectionTitle from "./SectionTitle";
+import useBoundStore from "../../../zustand/useBoundStore";
+import DateTimePicker from "../../ui/DateTimePicker";
 
 const fields = [
-  { name: 'address', rules: [{ type: 'required' }] },
-  { name: 'barangay', rules: [{ type: 'required' }] },
-  { name: 'landmark', rules: [{ type: 'required' }] },
-  { name: 'date', rules: [{ type: 'required' }] },
-]
+  { name: "address", rules: [{ type: "required" }] },
+  { name: "barangay", rules: [{ type: "required" }] },
+  { name: "landmark", rules: [{ type: "required" }] },
+  { name: "date", rules: [{ type: "required" }] },
+];
 
 const StepOneContent = ({ goNextStep }) => {
-  const { theme } = useStyles(stylesheet)
+  const { theme } = useStyles(stylesheet);
 
-  const IRForm = useBoundStore((state) => state.incidentReportForm)
-  const setIRForm = useBoundStore((state) => state.setIncidentReport)
-  const [errors, setErrors] = useState({})
-
-  // const formattedDate = moment(IRForm.date).format('YYYY-MM-DD')
-
-  /**
-   * 
-   * default val header
-   * default val input fields
-   * editable UI 
-   */
-
-  const handleFieldChange = (key, newValue) => {
-    setIRForm({ [key]: newValue });
-
-  }
-
+  const IRForm = useBoundStore((state) => state.incidentReportForm);
+  const setIRForm = useBoundStore((state) => state.setIncidentReport);
+  const broadcastId = useBoundStore((state) => state.broadcastId);
+  const [errors, setErrors] = useState({});
+  const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
+  
   const handleSubmit = () => {
     if (isFormValid(fields, IRForm, setErrors)) {
-      console.log('success')
-      goNextStep()
+      console.log("success");
+      goNextStep();
     }
-  }
+  };
 
   return (
     <Form removeDefaultPaddingBottom removeDefaultPaddingHorizontal>
       <FormHeader
-        title="Oakridge, 28 Oakwood Court"
-        date="Thursday, May 15, 2024"
-        id="2021300657"
+        title={IRForm?.address}
+        date={formattedDate}
+        id={broadcastId}
       />
       <SectionTitle title="Incident Details" />
       <TextInput
         label="Address"
         value={IRForm.address}
-        onChangeText={(value) => handleFieldChange('address', value)}
+        onChangeText={(value) => setIRForm({ address: value })}
         error={errors.address}
         variant="outlined"
       />
       <TextInput
         label="Barangay"
         value={IRForm.barangay}
-        onChangeText={(value) => handleFieldChange('barangay', value)}
+        onChangeText={(value) => setIRForm({ barangay: value })}
         error={errors.barangay}
         variant="outlined"
       />
       <TextInput
         label="Landmark"
         value={IRForm.landmark}
-        onChangeText={(value) => handleFieldChange('landmark', value)}
+        onChangeText={(value) => setIRForm({ landmark: value })}
         error={errors.landmark}
         variant="outlined"
       />
@@ -87,7 +75,7 @@ const StepOneContent = ({ goNextStep }) => {
         label="Date"
         variant="outlined"
         date={IRForm.date}
-        setDate={handleFieldChange}
+        setDate={setIRForm}
         error={errors.date}
       />
       <Button
@@ -96,14 +84,14 @@ const StepOneContent = ({ goNextStep }) => {
         onPress={handleSubmit}
       />
     </Form>
-  )
-}
+  );
+};
 
-export default StepOneContent
+export default StepOneContent;
 
 const stylesheet = createStyleSheet((theme) => ({
   ageGenderWrapper: {
-    flexDirection: 'row',
+    flexDirection: "row",
     columnGap: theme.spacing.sm,
   },
   input: {
@@ -118,4 +106,4 @@ const stylesheet = createStyleSheet((theme) => ({
     color: theme.colors.primary,
     borderColor: theme.colors.primary,
   },
-}))
+}));

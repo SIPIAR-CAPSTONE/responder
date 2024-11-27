@@ -1,24 +1,24 @@
-import { View, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, FlatList, ToastAndroid } from "react-native";
+import React, { useEffect, useState } from "react";
 
-import AppBar from '../../components/ui/AppBar'
-import { createStyleSheet, useStyles } from '../../hooks/useStyles'
-import CircularIcon from '../../components/ui/CircularIcon'
-import IncidentCard from '../../components/history/IncidentCard'
-import StatusBar from '../../components/common/StatusBar'
-import AppBarTitle from '../../components/ui/AppBarTitle'
-import { supabase } from '../../utils/supabase/config'
-import useBoundStore from '../../zustand/useBoundStore'
+import AppBar from "../../components/ui/AppBar";
+import { createStyleSheet, useStyles } from "../../hooks/useStyles";
+import CircularIcon from "../../components/ui/CircularIcon";
+import IncidentCard from "../../components/history/IncidentCard";
+import StatusBar from "../../components/common/StatusBar";
+import AppBarTitle from "../../components/ui/AppBarTitle";
+import { supabase } from "../../utils/supabase/config";
+import useBoundStore from "../../zustand/useBoundStore";
 
 const HistoryScreen = () => {
-  const { styles } = useStyles(stylesheet)
-  const [joinedData, setJoinedData] = useState([])
-  const userMetaData = useBoundStore((state) => state.userMetaData)
-  const setBroadcastId = useBoundStore((state) => state.setBroadcastId)
+  const { styles } = useStyles(stylesheet);
+  const [joinedData, setJoinedData] = useState([]);
+  const userMetaData = useBoundStore((state) => state.userMetaData);
+  const setBroadcastId = useBoundStore((state) => state.setBroadcastId);
 
   const fetchBroadcastData = async (id) => {
     const { data, error } = await supabase
-      .from('broadcast')
+      .from("broadcast")
       .select(
         `
         broadcast_id,
@@ -37,41 +37,41 @@ const HistoryScreen = () => {
             last_name,
             phone_number
         )
-    `,
+    `
       )
-      .eq('isActive', 'No')
-      .eq('responder_id', userMetaData['id'])
+      .eq("isActive", "No")
+      .eq("responder_id", userMetaData["id"]);
 
     if (error) {
-      console.error('Error fetching joined data:', error)
+      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     } else {
       // Sort data by created_at
       const sortedData = data.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at),
-      )
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
 
       // Update Zustand with the first broadcast_id (or other logic for setting it)
       if (sortedData.length > 0) {
-        setBroadcastId(sortedData[0].broadcast_id)
-        console.log('INITIAL LOAD B-ID: ', sortedData[0].broadcast_id);
+        setBroadcastId(sortedData[0].broadcast_id);
+        console.log("INITIAL LOAD B-ID: ", sortedData[0].broadcast_id);
       }
 
       // Update the component's local state
-      setJoinedData(sortedData)
+      setJoinedData(sortedData);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchBroadcastData()
+    fetchBroadcastData();
 
     const broadcastChannel = supabase
-      .channel('broadcast-channel')
+      .channel("broadcast-channel")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'broadcast' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "broadcast" },
         async (payload) => {
           const { data, error } = await supabase
-            .from('broadcast')
+            .from("broadcast")
             .select(
               `
             broadcast_id,
@@ -83,33 +83,33 @@ const HistoryScreen = () => {
               condition,
               remarks
             )
-          `,
+          `
             )
-            .eq('broadcast_id', payload.new.broadcast_id)
-            .eq('isActive', 'No')
-            .eq('responder_id', userMetaData['id'])
+            .eq("broadcast_id", payload.new.broadcast_id)
+            .eq("isActive", "No")
+            .eq("responder_id", userMetaData["id"]);
 
           if (!error && data.length > 0) {
             // Update Zustand with the new broadcast_id
-            setBroadcastId(payload.new.broadcast_id)
+            setBroadcastId(payload.new.broadcast_id);
 
             setJoinedData((prevData) => {
               const updatedData = prevData.filter(
-                (item) => item.broadcast_id !== payload.new.broadcast_id,
-              )
+                (item) => item.broadcast_id !== payload.new.broadcast_id
+              );
               return [...updatedData, data[0]].sort(
-                (a, b) => new Date(b.created_at) - new Date(a.created_at),
-              )
-            })
+                (a, b) => new Date(b.created_at) - new Date(a.created_at)
+              );
+            });
           }
-        },
+        }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      broadcastChannel.unsubscribe()
-    }
-  }, [userMetaData['id']])
+      broadcastChannel.unsubscribe();
+    };
+  }, [userMetaData["id"]]);
 
   return (
     <>
@@ -118,7 +118,7 @@ const HistoryScreen = () => {
         <AppBarTitle>Response History</AppBarTitle>
         <CircularIcon
           name="filter"
-          onPress={() => console.log('open bottom sheet')}
+          onPress={() => console.log("open bottom sheet")}
         />
       </AppBar>
       <FlatList
@@ -131,26 +131,26 @@ const HistoryScreen = () => {
             address={item.address}
             barangay={item.barangay}
             landmark={item.landmark}
-            emergency_type={item.emergency_type}
             created_at={item.created_at}
-            first_name={item.first_name}
-            last_name={item.last_name}
             phone_number={item.phone_number}
             remarks={item.remarks}
             condition={item.condition}
+            isCreated={item?.isCreated}
+            first_name={item?.bystander?.first_name}
+            last_name={item?.bystander?.last_name}
           />
         )}
         contentContainerStyle={styles.content}
       />
     </>
-  )
-}
+  );
+};
 
-export default HistoryScreen
+export default HistoryScreen;
 
 const stylesheet = createStyleSheet(() => ({
   content: {
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
-}))
+}));

@@ -25,7 +25,7 @@ const DateTimePicker = ({
   const handleOnPress = () => setOpen(true);
   const handleOnConfirm = (date) => {
     setOpen(false);
-    setDate("date", date);
+    setDate({ date: date });
   };
 
   return (
