@@ -41,6 +41,10 @@ const ProfileScreen = () => {
 
       const { error } = await supabase.auth.signOut();
 
+      if (error) {
+        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      }
+
       if (!error) {
         //* remove encrypted session from secure local storage
         await largeSecureStore.removeItem("session");
