@@ -48,7 +48,7 @@ const StepTwoContent = ({ goNextStep }) => {
         date="Thursday, May 15, 2024"
         id="2021300657"
       />
-      <SectionTitle title="Requestor Information" />
+      <SectionTitle title="Bystander Information" />
       <TextInput
         label="Bystander Name"
         value={IRForm.bystanderName}
