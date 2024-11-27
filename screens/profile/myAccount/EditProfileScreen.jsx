@@ -26,6 +26,7 @@ const fields = [
 const EditProfileScreen = () => {
   const { styles, theme } = useStyles(stylesheet);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const [userInfo, setUserInfo] = useState({
     firstName: "verseler",
@@ -132,6 +133,7 @@ const EditProfileScreen = () => {
         isVisible={isConfirmationDialogVisible}
         onPressConfirmation={handleSubmit}
         onPressCancel={hideConfirmationDialog}
+        loading={loading}
       />
     </Layout>
   );

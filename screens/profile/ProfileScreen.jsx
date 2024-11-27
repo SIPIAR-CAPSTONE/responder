@@ -20,6 +20,7 @@ import useUserMetadata from "../../hooks/useUserMetadata";
 const ProfileScreen = () => {
   const { styles } = useStyles(stylesheet);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
@@ -35,29 +36,37 @@ const ProfileScreen = () => {
   );
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
+    try {
+      setLoading(true);
 
-    if (!error) {
-      //* remove encrypted session from secure local storage
-      await largeSecureStore.removeItem("session");
-      //* remove encrypted session as a global state
-      removeSession();
+      const { error } = await supabase.auth.signOut();
 
-      // //* remove global state variable
-      removeState();
+      if (!error) {
+        //* remove encrypted session from secure local storage
+        await largeSecureStore.removeItem("session");
+        //* remove encrypted session as a global state
+        removeSession();
 
-      //* remove profile picture in local storage
-      if (globalStateProfilePath) {
-        try {
-          //* remove profile picture in local storage
-          await FileSystem.deleteAsync(globalStateProfilePath);
-        } catch (error) {
-          ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        // //* remove global state variable
+        removeState();
+
+        //* remove profile picture in local storage
+        if (globalStateProfilePath) {
+          try {
+            //* remove profile picture in local storage
+            await FileSystem.deleteAsync(globalStateProfilePath);
+          } catch (error) {
+            ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+          }
         }
-      }
 
-      //* remove profile picture global variable
-      removeProfilePicturePath();
+        //* remove profile picture global variable
+        removeProfilePicturePath();
+      }
+    } catch (error) {
+      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,6 +124,7 @@ const ProfileScreen = () => {
           isVisible={isLogoutDialogVisible}
           onPressConfirmation={handleConfirmLogout}
           onPressCancel={hideLogoutDialog}
+          loading={loading}
         />
       </View>
     </Layout>
