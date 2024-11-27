@@ -70,6 +70,7 @@ const MapviewScreen = ({ route }) => {
         showsScale
         showsBuildings
         showsCompass
+        showsTraffic
       >
         {alertMarkers}
       </MapView>
