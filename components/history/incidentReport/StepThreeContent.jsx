@@ -1,91 +1,102 @@
-import { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { View } from 'react-native'
+import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { ToastAndroid, View } from "react-native";
 
-import Form from '../../common/Form'
-import FormHeader from '../../common/FormHeader'
-import TextInput from '../../ui/TextInput'
-import { useStyles, createStyleSheet } from '../../../hooks/useStyles'
-import Button from '../../ui/Button'
-import SectionTitle from './SectionTitle'
-import useBoundStore from '../../../zustand/useBoundStore'
-import { isFormValid } from '../../../utils/formValidation'
-import SuccessConfirmation from '../../common/SuccessConfirmation'
+import Form from "../../common/Form";
+import TextInput from "../../ui/TextInput";
+import { useStyles, createStyleSheet } from "../../../hooks/useStyles";
+import Button from "../../ui/Button";
+import SectionTitle from "./SectionTitle";
+import { isFormValid } from "../../../utils/formValidation";
+import SuccessConfirmation from "../../common/SuccessConfirmation";
 import { supabase } from "../../../utils/supabase/config";
+import moment from "moment";
+import FormHeader from "../../common/FormHeader";
+import useBoundStore from "../../../zustand/useBoundStore";
 
 const fields = [
-  { name: 'remarks', rules: [{ type: 'required' }] },
-  { name: 'condition', rules: [{ type: 'required' }] },
-]
+  { name: "remarks", rules: [{ type: "required" }] },
+  { name: "condition", rules: [{ type: "required" }] },
+];
 
-const StepTwoContent = () => {
-  const { styles, theme } = useStyles(stylesheet)
-  const navigation = useNavigation()
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+const StepThreeContent = () => {
+  const { styles, theme } = useStyles(stylesheet);
+  const navigation = useNavigation();
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const IRForm = useBoundStore((state) => state.incidentReportForm)
-  const setIRForm = useBoundStore((state) => state.setIncidentReport)
-  const [errors, setErrors] = useState({})
-  const broadcastId = useBoundStore((state) => state.broadcastId)
-
-  const handleFieldChange = (key, newValue) => {
-    setIRForm({ [key]: newValue })
-  }
+  const IRForm = useBoundStore((state) => state.incidentReportForm);
+  const setIRForm = useBoundStore((state) => state.setIncidentReport);
+  const broadcastId = useBoundStore((state) => state.broadcastId);
+  const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (isFormValid(fields, IRForm, setErrors)) {
-      console.log('FORM DATAS: ', IRForm)
-      console.log('BROADCAST ID: ', broadcastId)
+      console.log("FORM DATAS: ", IRForm);
+      console.log("BROADCAST ID: ", broadcastId);
 
-      const { error: broadcastUpdateError  } = await supabase
-        .from('broadcast')
-        .update({
-          address: IRForm['address'],
-          barangay: IRForm['barangay'],
-          landmark: IRForm['landmark']
-        })
-        .eq('broadcast_id', broadcastId)
+      try {
+        setLoading(true);
 
-      if(broadcastUpdateError){
-        console.error('ERROR BROADCAST UPDATE: ', error);
-        return;
+        const { error: broadcastUpdateError } = await supabase
+          .from("broadcast")
+          .update({
+            address: IRForm["address"],
+            barangay: IRForm["barangay"],
+            landmark: IRForm["landmark"],
+          })
+          .eq("broadcast_id", broadcastId);
+
+        if (broadcastUpdateError) {
+          console.error(
+            "ERROR BROADCAST UPDATE: ",
+            broadcastUpdateError.message
+          );
+          return;
+        }
+
+        const { error: incidentUpdateError } = await supabase
+          .from("incident_history")
+          .update({
+            emergency_type: IRForm["emergencyType"],
+            condition: IRForm["condition"],
+            remarks: IRForm["remarks"],
+          })
+          .eq("broadcast_id", broadcastId);
+
+        if (incidentUpdateError) {
+          console.error("ERROR INCIDENT UPDATE: ", incidentUpdateError);
+          return;
+        }
+
+        setShowSuccessAlert(true);
+      } catch (error) {
+        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      } finally {
+        setLoading(false);
       }
-
-      const { error: incidentUpdateError  } = await supabase
-        .from('incident_history')
-        .update({
-          emergency_type: IRForm['emergencyType'],
-          condition: IRForm['condition'],
-          remarks: IRForm['remarks']
-        })
-        .eq('broadcast_id', broadcastId)
-
-      if(incidentUpdateError){
-        console.error('ERROR INCIDENT UPDATE: ', incidentUpdateError);
-        return;
-      }
-
-      setShowSuccessAlert(true);
     }
-  }
+  };
 
   return (
     <Form removeDefaultPaddingBottom removeDefaultPaddingHorizontal>
       <FormHeader
-        title={`address: ${IRForm['address']} barangay: ${IRForm['barangay']} landmark: ${IRForm['landmark']} emergencyType: ${IRForm['emergencyType']} date: ${IRForm['date']} bystanderName: ${IRForm['bystanderName']} phone: ${IRForm['phone']}`}
-        date="Thursday, May 15, 2024"
-        id="2021300657"
+        title={IRForm?.address}
+        date={formattedDate}
+        id={broadcastId}
       />
       <SectionTitle title="Remarks" />
       <TextInput
         placeholder="Type here..."
         value={IRForm.remarks}
-        onChangeText={(value) => handleFieldChange('remarks', value)}
+        onChangeText={(value) => setIRForm({ remarks: value })}
         error={errors.remarks}
         style={[styles.textArea, errors.textArea && styles.textAreaError]}
         multiline
         textAlignVertical="top"
         variant="outlined"
+        disabled={loading}
       />
 
       <SectionTitle title="Condition" />
@@ -95,16 +106,17 @@ const StepTwoContent = () => {
           variant="outlined"
           style={[
             styles.toggleButton,
-            IRForm.condition === 'not stable'
+            !IRForm.condition || IRForm.condition === "not stable"
               ? styles.activeUnstableToggleButton
               : styles.inactiveToggleButton,
           ]}
           labelStyle={
-            IRForm.condition === 'not stable'
+            IRForm.condition === "not stable"
               ? styles.activeUnstableToggleLabel
               : styles.inactiveToggleLabel
           }
-          onPress={() => setIRForm({ condition: 'not stable' })}
+          onPress={() => setIRForm({ condition: "not stable" })}
+          disabled={loading}
         />
         <Button
           label="Stable"
@@ -112,16 +124,17 @@ const StepTwoContent = () => {
           rippleColor="#d0f9c5"
           style={[
             styles.toggleButton,
-            IRForm.condition === 'stable'
+            IRForm.condition === "stable"
               ? styles.activeStableToggleButton
               : styles.inactiveToggleButton,
           ]}
           labelStyle={
-            IRForm.condition === 'stable'
+            IRForm.condition === "stable"
               ? styles.activeStableToggleLabel
               : styles.inactiveToggleLabel
           }
-          onPress={() => setIRForm({ condition: 'stable' })}
+          onPress={() => setIRForm({ condition: "stable" })}
+          disabled={loading}
         />
       </View>
 
@@ -129,6 +142,7 @@ const StepTwoContent = () => {
         label="Create"
         marginVertical={theme.spacing.xxl}
         onPress={handleSubmit}
+        isLoading={loading}
       />
 
       <SuccessConfirmation
@@ -136,13 +150,13 @@ const StepTwoContent = () => {
         setOpen={setShowSuccessAlert}
         title="Submitted Successfully!"
         desc="The incident report has been submitted successfully!"
-        onDelayEnd={() => navigation.navigate('HistoryScreen')}
+        onDelayEnd={() => navigation.navigate("HistoryScreen")}
       />
     </Form>
-  )
-}
+  );
+};
 
-export default StepTwoContent
+export default StepThreeContent;
 
 const stylesheet = createStyleSheet((theme) => ({
   textArea: {
@@ -155,7 +169,7 @@ const stylesheet = createStyleSheet((theme) => ({
     borderColor: theme.colors.primary,
   },
   toggleWrapper: {
-    flexDirection: 'row',
+    flexDirection: "row",
     columnGap: theme.spacing.sm,
   },
   toggleButton: {
@@ -179,4 +193,4 @@ const stylesheet = createStyleSheet((theme) => ({
   inactiveToggleLabel: {
     color: theme.colors.text,
   },
-}))
+}));

@@ -1,4 +1,4 @@
-import { Dialog, Portal } from "react-native-paper";
+import { ActivityIndicator, Dialog, Portal } from "react-native-paper";
 import React from "react";
 
 import Button from "./Button";
@@ -14,6 +14,7 @@ const ConfirmationDialog = ({
   onPressCancel,
   containerStyle = {},
   dismissable = false,
+  loading = false,
 }) => {
   const { styles } = useStyles(stylesheet);
 
@@ -26,14 +27,25 @@ const ConfirmationDialog = ({
         dismissable={dismissable}
       >
         <Dialog.Title style={styles.title}>{title}</Dialog.Title>
-        {content && (
-          <Dialog.Content style={styles.desc}>{content}</Dialog.Content>
+        {loading ? (
+          <Dialog.Content style={styles.dialogLoadingContent}>
+            <ActivityIndicator size="large" />
+          </Dialog.Content>
+        ) : (
+          <>
+            {content && (
+              <Dialog.Content style={styles.desc}>{content}</Dialog.Content>
+            )}
+            <Dialog.Actions style={styles.buttonsContainer}>
+              <Button label={confirmationLabel} onPress={onPressConfirmation} />
+              <Button
+                label={cancelLabel}
+                onPress={onPressCancel}
+                variant="text"
+              />
+            </Dialog.Actions>
+          </>
         )}
-
-        <Dialog.Actions style={styles.buttonsContainer}>
-          <Button label={confirmationLabel} onPress={onPressConfirmation} />
-          <Button label={cancelLabel} onPress={onPressCancel} variant="text" />
-        </Dialog.Actions>
       </Dialog>
     </Portal>
   );
@@ -55,5 +67,9 @@ const stylesheet = createStyleSheet((theme) => ({
     flexDirection: "column",
     alignItems: "baseline",
     rowGap: theme.spacing.xxs,
+  },
+  dialogLoadingContent: {
+    height: 148,
+    justifyContent: "center",
   },
 }));
