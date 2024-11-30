@@ -1,5 +1,6 @@
 import { View, FlatList, ToastAndroid } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import moment from "moment";
 
 import AppBar from "../../components/ui/AppBar";
 import { createStyleSheet, useStyles } from "../../hooks/useStyles";
@@ -9,12 +10,32 @@ import StatusBar from "../../components/common/StatusBar";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import { supabase } from "../../utils/supabase/config";
 import useBoundStore from "../../zustand/useBoundStore";
+import SortBottomSheet from "../../components/history/SortBottomSheet";
+import NotInternetAlert from "../../components/common/NoInternetAlert";
 
 const HistoryScreen = () => {
   const { styles } = useStyles(stylesheet);
   const [joinedData, setJoinedData] = useState([]);
   const userMetaData = useBoundStore((state) => state.userMetaData);
   const setBroadcastId = useBoundStore((state) => state.setBroadcastId);
+
+  const bottomSheetRef = useRef(null);
+  const [showSortSheet, setShowSortSheet] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("created_at");
+  const closeSortSheet = () => setShowSortSheet(false);
+
+  const sortedIReport = joinedData.sort((a, b) => {
+    if (selectedSort === "created_at") {
+      return new Date(a.created_at) - new Date(b.created_at);
+    } else if (selectedSort === "address") {
+      // return String(a.address).localeCompare(String(b.address));
+      return a.address > b.address ? 1 : -1;
+    }
+    //TODO: change this to created at later
+    else if (selectedSort === "condition") {
+      return a.condition > b.condition ? 1 : -1;
+    }
+  });
 
   const fetchBroadcastData = async (id) => {
     const { data, error } = await supabase
@@ -98,7 +119,7 @@ const HistoryScreen = () => {
                 (item) => item.broadcast_id !== payload.new.broadcast_id
               );
               return [...updatedData, data[0]].sort(
-                (a, b) => new Date(b.created_at) - new Date(a.created_at)
+                (a, b) => moment(b.created_at) - moment(a.created_at)
               );
             });
           }
@@ -118,11 +139,11 @@ const HistoryScreen = () => {
         <AppBarTitle>Response History</AppBarTitle>
         <CircularIcon
           name="filter"
-          onPress={() => console.log("open bottom sheet")}
+          onPress={() => setShowSortSheet((prevShowSheet) => !prevShowSheet)}
         />
       </AppBar>
       <FlatList
-        data={joinedData}
+        data={sortedIReport}
         keyExtractor={(item) => item.broadcast_id}
         ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         renderItem={({ item }) => (
@@ -142,6 +163,14 @@ const HistoryScreen = () => {
         )}
         contentContainerStyle={styles.content}
       />
+      <SortBottomSheet
+        ref={bottomSheetRef}
+        isVisible={showSortSheet}
+        close={closeSortSheet}
+        selectedOption={selectedSort}
+        setSelectedOption={setSelectedSort}
+      />
+      <NotInternetAlert />
     </>
   );
 };
