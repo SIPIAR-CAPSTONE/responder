@@ -155,7 +155,7 @@ const HistoryScreen = () => {
             barangay={item.barangay}
             landmark={item.landmark}
             created_at={item.created_at}
-            phone_number={item.bystander.phone_number}
+            phone_number={item?.bystander?.phone_number}
             remarks={item.incident_history[0].remarks}
             condition={item.incident_history[0].condition}
             isCreated={item?.isCreated}
