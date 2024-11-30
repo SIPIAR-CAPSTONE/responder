@@ -1,3 +1,4 @@
+import { convertDistance, getPreciseDistance } from "geolib";
 import moment from "moment";
 
 /*
@@ -63,7 +64,7 @@ const formatTimeGap = (months, days, hours, minutes) => {
  *
  */
 function getDistanceGap(userCoordinate, selectedCoordinate) {
-  //handle empty or falsy coordiantes
+  //handle empty or falsy coordinates
   if (
     isInvalidCoordinate(userCoordinate) ||
     isInvalidCoordinate(selectedCoordinate)
@@ -71,49 +72,22 @@ function getDistanceGap(userCoordinate, selectedCoordinate) {
     return " - ";
   }
 
-  const EARTH_RADIUS_KM = 6371;
-  const userLatRadians = toRadians(userCoordinate.latitude);
-  const userLonRadians = toRadians(userCoordinate.longitude);
-  const selectedLatRadians = toRadians(selectedCoordinate.latitude);
-  const selectedLonRadians = toRadians(selectedCoordinate.longitude);
+  const gapDistance = getPreciseDistance(userCoordinate, selectedCoordinate);
+  const distanceLength = String(gapDistance).length;
+  const formattedGapDistance =
+    distanceLength > 2
+      ? `${convertDistance(gapDistance, "km").toFixed(1)} km`
+      : `${gapDistance} m`;
 
-  const deltaLat = selectedLatRadians - userLatRadians;
-  const deltaLon = selectedLonRadians - userLonRadians;
-
-  const a =
-    Math.sin(deltaLat / 2) ** 2 +
-    Math.cos(userLatRadians) *
-      Math.cos(selectedLatRadians) *
-      Math.sin(deltaLon / 2) ** 2;
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  const distanceKm = EARTH_RADIUS_KM * c;
-
-  return formatDistance(distanceKm);
+  return formattedGapDistance;
 }
 
-/*
- *
- * getDistanceGap helper function
- *
- */
 //check if user or selected coordinates are empty or falsy
 const isInvalidCoordinate = (coordinate) => {
   return (
     !coordinate ||
     (typeof coordinate === "object" && Object.keys(coordinate).length === 0)
   );
-};
-
-//convert degrees to radians
-const toRadians = (degrees) => degrees * (Math.PI / 180);
-
-// Function to format the distance into a human-readable string
-const formatDistance = (distanceKm) => {
-  return distanceKm >= 1
-    ? `${distanceKm.toFixed(1)} km`
-    : `${(distanceKm * 1000).toFixed(0)} m`;
 };
 
 export { getTimeGap, getDistanceGap };

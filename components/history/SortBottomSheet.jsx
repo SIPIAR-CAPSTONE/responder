@@ -21,6 +21,7 @@ const SortBottomSheet = forwardRef(function SortBottomSheet(
 
   const SortOptions = data.map((option) => (
     <List.Item
+      rippleColor={"rgba(0,0,0,0)"}
       key={option.id}
       title={option.title}
       titleStyle={option.value === selectedOption && styles.activeSortOption}
@@ -88,13 +89,12 @@ const stylesheet = createStyleSheet((theme) => ({
 }));
 
 const SORT_OPTIONS = [
-  { id: 1, title: "Name", value: "name", icon: "order-alphabetical-ascending" },
-  { id: 2, title: "Address", value: "address", icon: "map-marker-minus" },
-  { id: 3, title: "Distance", value: "distance", icon: "map-marker-distance" },
   {
     id: 4,
-    title: "Time Requested",
-    value: "timeRequested",
+    title: "Time",
+    value: "created_at",
     icon: "clock-time-ten-outline",
   },
+  { id: 2, title: "Address", value: "address", icon: "map-marker-minus" },
+  { id: 3, title: "Condition", value: "condition", icon: "heart-pulse" },
 ];
