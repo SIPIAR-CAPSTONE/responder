@@ -66,6 +66,8 @@ const HistoryScreen = () => {
     if (error) {
       ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     } else {
+      console.log(JSON.stringify(data, null, 2));
+
       // Sort data by created_at
       const sortedData = data.sort(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
@@ -153,9 +155,9 @@ const HistoryScreen = () => {
             barangay={item.barangay}
             landmark={item.landmark}
             created_at={item.created_at}
-            phone_number={item.phone_number}
-            remarks={item.remarks}
-            condition={item.condition}
+            phone_number={item.bystander.phone_number}
+            remarks={item.incident_history[0].remarks}
+            condition={item.incident_history[0].condition}
             isCreated={item?.isCreated}
             first_name={item?.bystander?.first_name}
             last_name={item?.bystander?.last_name}

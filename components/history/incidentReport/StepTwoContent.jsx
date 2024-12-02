@@ -37,7 +37,8 @@ const StepTwoContent = ({ goNextStep }) => {
   const broadcastId = useBoundStore((state) => state.broadcastId);
   const [errors, setErrors] = useState({});
   const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
-  
+  console.log('phone number', IRForm.phone);
+
   const handleSubmit = () => {
     if (isFormValid(fields, IRForm, setErrors)) {
       goNextStep();
