@@ -1,43 +1,55 @@
-import { lazy, useState } from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
-import ProgressSteps, { Content } from "@joaosousa/react-native-progress-steps";
-import { useNavigation } from "@react-navigation/native";
+import { lazy, useEffect, useState } from 'react'
+import { View } from 'react-native'
+import { Text } from 'react-native-paper'
+import ProgressSteps, { Content } from '@joaosousa/react-native-progress-steps'
+import { useNavigation } from '@react-navigation/native'
 
-import Layout from "../../components/common/Layout";
-import { createStyleSheet, useStyles } from "../../hooks/useStyles";
-import AppBar from "../../components/ui/AppBar";
-import CircularIcon from "../../components/ui/CircularIcon";
-import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
-import StepOneContent from "../../components/history/incidentReport/StepOneContent";
+import Layout from '../../components/common/Layout'
+import { createStyleSheet, useStyles } from '../../hooks/useStyles'
+import AppBar from '../../components/ui/AppBar'
+import CircularIcon from '../../components/ui/CircularIcon'
+import ConfirmationDialog from '../../components/ui/ConfirmationDialog'
+import StepOneContent from '../../components/history/incidentReport/StepOneContent'
+import useBoundStore from '../../zustand/useBoundStore'
 const StepTwoContent = lazy(() =>
-  import("../../components/history/incidentReport/StepTwoContent")
-);
+  import('../../components/history/incidentReport/StepTwoContent'),
+)
 const StepThreeContent = lazy(() =>
-  import("../../components/history/incidentReport/StepThreeContent")
-);
+  import('../../components/history/incidentReport/StepThreeContent'),
+)
 
-const IncidentReportScreen = () => {
-  const { styles, theme } = useStyles(stylesheet);
-  const navigation = useNavigation();
-  const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] =
-    useState(false);
+const IncidentReportScreen = ({ route }) => {
+  const { broadcastId } = route.params || {}
+  const setBroadcastId = useBoundStore((state) => state.setBroadcastId)
 
-  const showConfirmationDialog = () => setIsConfirmationDialogVisible(true);
-  const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false);
+  useEffect(() => {
+    if (broadcastId) {
+      setBroadcastId(broadcastId)
+    }
+  }, [broadcastId])
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const { styles, theme } = useStyles(stylesheet)
+  const navigation = useNavigation()
+  const [
+    isConfirmationDialogVisible,
+    setIsConfirmationDialogVisible,
+  ] = useState(false)
+
+  const showConfirmationDialog = () => setIsConfirmationDialogVisible(true)
+  const hideConfirmationDialog = () => setIsConfirmationDialogVisible(false)
+
+  const [currentStep, setCurrentStep] = useState(0)
 
   const goNextStep = () =>
-    setCurrentStep((prevCurrentStep) => prevCurrentStep + 1);
+    setCurrentStep((prevCurrentStep) => prevCurrentStep + 1)
 
   const goBackStep = () => {
     if (currentStep > 0) {
-      setCurrentStep((prevCurrentStep) => prevCurrentStep - 1);
+      setCurrentStep((prevCurrentStep) => prevCurrentStep - 1)
     } else {
-      showConfirmationDialog();
+      showConfirmationDialog()
     }
-  };
+  }
 
   const steps = [
     {
@@ -64,7 +76,7 @@ const IncidentReportScreen = () => {
         </Content>
       ),
     },
-  ];
+  ]
 
   const customColors = {
     marker: {
@@ -79,7 +91,7 @@ const IncidentReportScreen = () => {
         completed: theme.colors.primary,
       },
     },
-  };
+  }
 
   const CustomAppBar = () => (
     <AppBar style={styles.appBar}>
@@ -89,7 +101,7 @@ const IncidentReportScreen = () => {
       {/* invisible element, just to make the title center */}
       <View style={{ width: 30 }} />
     </AppBar>
-  );
+  )
 
   return (
     <Layout
@@ -115,10 +127,10 @@ const IncidentReportScreen = () => {
         onPressCancel={hideConfirmationDialog}
       />
     </Layout>
-  );
-};
+  )
+}
 
-export default IncidentReportScreen;
+export default IncidentReportScreen
 
 const stylesheet = createStyleSheet((theme) => ({
   appBar: {
@@ -126,7 +138,7 @@ const stylesheet = createStyleSheet((theme) => ({
   },
   appBarTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: theme.colors.text,
   },
   container: {
@@ -135,4 +147,4 @@ const stylesheet = createStyleSheet((theme) => ({
   content: {
     paddingHorizontal: theme.spacing.base,
   },
-}));
+}))
