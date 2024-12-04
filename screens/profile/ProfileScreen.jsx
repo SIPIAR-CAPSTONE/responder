@@ -27,7 +27,7 @@ const ProfileScreen = () => {
   const showLogoutDialog = () => setIsLogoutDialogVisible(true);
   const largeSecureStore = new LargeSecureStore();
   const removeSession = useBoundStore((state) => state.removeSession);
-  const { removeState } = useUserMetadata();
+  const { removeState: removeUserMetadata } = useUserMetadata();
   const removeProfilePicturePath = useBoundStore(
     (state) => state.removeProfilePicturePath
   );
@@ -46,13 +46,9 @@ const ProfileScreen = () => {
       }
 
       if (!error) {
-        //* remove encrypted session from secure local storage
         await largeSecureStore.removeItem("session");
-        //* remove encrypted session as a global state
         removeSession();
-
-        // //* remove global state variable
-        removeState();
+        removeUserMetadata();
 
         //* remove profile picture in local storage
         if (globalStateProfilePath) {
@@ -89,11 +85,7 @@ const ProfileScreen = () => {
 
   return (
     <Layout scrollable AppbarComponent={CustomAppBar}>
-      <UserProfileCard
-        name="Verseler kerr Handuman"
-        email="handuman.verselerkerr@gmail.com"
-        imageSource=""
-      />
+      <UserProfileCard />
       <View style={styles.listItems}>
         <ListItem
           size="medium"
