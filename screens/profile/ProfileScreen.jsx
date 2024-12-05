@@ -13,7 +13,6 @@ import CircularIcon from "../../components/ui/CircularIcon";
 import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import { supabase } from "../../utils/supabase/config";
-import { LargeSecureStore } from "../../utils/SecureLocalStorage";
 import useBoundStore from "../../zustand/useBoundStore";
 import useUserMetadata from "../../hooks/useUserMetadata";
 
@@ -25,7 +24,6 @@ const ProfileScreen = () => {
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
   const showLogoutDialog = () => setIsLogoutDialogVisible(true);
-  const largeSecureStore = new LargeSecureStore();
   const removeSession = useBoundStore((state) => state.removeSession);
   const { removeState: removeUserMetadata } = useUserMetadata();
   const removeProfilePicturePath = useBoundStore(
@@ -46,7 +44,6 @@ const ProfileScreen = () => {
       }
 
       if (!error) {
-        await largeSecureStore.removeItem("session");
         removeSession();
         removeUserMetadata();
 

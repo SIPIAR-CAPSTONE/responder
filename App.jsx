@@ -13,6 +13,7 @@ import { darkTheme, lightTheme } from "./utils/theme";
 import { SignedInStack, SignedOutStack } from "./navigation/StackScreen";
 import useBoundStore from "./zustand/useBoundStore";
 import useInitializeTheme from "./hooks/useInitializeTheme";
+import useInternet from "./hooks/useInternet";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -21,16 +22,24 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const { hasInternet } = useInternet();
   const currentThemeScheme = useBoundStore((state) => state.currentThemeScheme);
   const selectedTheme = currentThemeScheme === "light" ? lightTheme : darkTheme;
   const globalStateEncryptedSession = useBoundStore((state) => state.session);
   const restoreSession = useBoundStore((state) => state.restoreSession);
+  const restoreSessionOffline = useBoundStore(
+    (state) => state.restoreSessionOffline
+  );
   useInitializeTheme();
 
   useEffect(() => {
     async function prepare() {
       try {
-        await restoreSession();
+        if (hasInternet) {
+          await restoreSession();
+        } else {
+          await restoreSessionOffline();
+        }
       } catch (error) {
         ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
       } finally {

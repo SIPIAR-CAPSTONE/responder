@@ -1,4 +1,7 @@
 import { supabase } from "../utils/supabase/config";
+import { LargeSecureStore } from "../utils/SecureLocalStorage";
+
+const largeSecureStore = new LargeSecureStore();
 
 const DEFAULT_SIGNUP_FORM = {
   firstName: "",
@@ -15,7 +18,7 @@ const DEFAULT_SIGNUP_FORM = {
   confirmPassword: "",
 };
 
-export const createAuthSlice = (set) => ({
+export const createAuthSlice = (set, get) => ({
   session: null,
   resetPasswordSession: null,
   appIsReady: false,
@@ -23,11 +26,11 @@ export const createAuthSlice = (set) => ({
   signupForm: DEFAULT_SIGNUP_FORM,
   signupCurrentStep: 0,
   userMetaData: {
-    id: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    suffix: '',
+    id: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    suffix: "",
     birthday: new Date(),
     phone: 0,
     barangay: "",
@@ -44,31 +47,63 @@ export const createAuthSlice = (set) => ({
       signupForm: { ...state.signupForm, [key]: newValue },
     })),
   setPasswordResetEmail: (value) => set({ passwordResetEmail: value }),
-  setSession: (encryptedSession) => {
+  setSession: async (session) => {
+    console.log("setting session");
+    const encryptedSession = await largeSecureStore.setItem("session", session);
     set({ session: encryptedSession });
   },
   restoreSession: async () => {
+
     const { data } = await supabase.auth.getSession();
+
     if (data && data.session) {
-      set({ session: data.session });
+      const sessionUserMetaData = data.session["user"]["user_metadata"];
       set({
         userMetaData: {
-          firstName: data.session["user"]["user_metadata"]["first_name"],
-          middleName: data.session["user"]["user_metadata"]["middle_name"],
-          lastName: data.session["user"]["user_metadata"]["last_name"],
-          suffix: data.session["user"]["user_metadata"]["suffix"],
-          birthday: data.session["user"]["user_metadata"]["birth_date"],
-          phone: data.session["user"]["user_metadata"]["phone_number"],
-          barangay: data.session["user"]["user_metadata"]["barangay"],
-          street: data.session["user"]["user_metadata"]["street"],
-          houseNumber: data.session["user"]["user_metadata"]["house_number"],
-          email: data.session["user"]["user_metadata"]["email"],
+          firstName: sessionUserMetaData["first_name"],
+          middleName: sessionUserMetaData["middle_name"],
+          lastName: sessionUserMetaData["last_name"],
+          suffix: sessionUserMetaData["suffix"],
+          birthday: sessionUserMetaData["birth_date"],
+          phone: sessionUserMetaData["phone_number"],
+          barangay: sessionUserMetaData["barangay"],
+          street: sessionUserMetaData["street"],
+          houseNumber: sessionUserMetaData["house_number"],
+          email: sessionUserMetaData["email"],
         },
       });
+      set({ session: data.session });
+      await largeSecureStore.setItem("session", data.session);
+    } else {
+      await get().removeSession();
     }
   },
-  removeSession: () => {
+  restoreSessionOffline: async () => {
+    const session = await largeSecureStore.getItem("session");
+    if (session) {
+      const sessionUserMetaData = session["user"]["user_metadata"];
+      set({
+        userMetaData: {
+          firstName: sessionUserMetaData["first_name"],
+          middleName: sessionUserMetaData["middle_name"],
+          lastName: sessionUserMetaData["last_name"],
+          suffix: sessionUserMetaData["suffix"],
+          birthday: sessionUserMetaData["birth_date"],
+          phone: sessionUserMetaData["phone_number"],
+          barangay: sessionUserMetaData["barangay"],
+          street: sessionUserMetaData["street"],
+          houseNumber: sessionUserMetaData["house_number"],
+          email: sessionUserMetaData["email"],
+        },
+      });
+      set({ session: session });
+    } else {
+      await get().removeSession();
+    }
+  },
+  removeSession: async () => {
     set({ session: null });
+    await largeSecureStore.removeItem("session");
   },
   setAppIsReady: (value) => set({ appIsReady: value }),
   setResetPasswordSession: (value) => set({ resetPasswordSession: value }),
