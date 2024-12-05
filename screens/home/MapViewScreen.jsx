@@ -75,12 +75,14 @@ const MapviewScreen = ({ route }) => {
         {alertMarkers}
       </MapView>
 
-      <MarkerDialog
-        visible={isDialogVisible}
-        hideDialog={hideDialog}
-        selectedMarker={selectedAlert}
-        userLocation={userLocation}
-      />
+      {isDialogVisible && (
+        <MarkerDialog
+          visible={isDialogVisible}
+          hideDialog={hideDialog}
+          selectedMarker={selectedAlert}
+          userLocation={userLocation}
+        />
+      )}
 
       <NotInternetAlert />
     </>
