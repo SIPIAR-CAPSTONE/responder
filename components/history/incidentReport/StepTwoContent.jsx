@@ -37,7 +37,6 @@ const StepTwoContent = ({ goNextStep }) => {
   const broadcastId = useBoundStore((state) => state.broadcastId);
   const [errors, setErrors] = useState({});
   const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
-  console.log('phone number', IRForm.phone);
 
   const handleSubmit = () => {
     if (isFormValid(fields, IRForm, setErrors)) {
@@ -59,7 +58,8 @@ const StepTwoContent = ({ goNextStep }) => {
         value={IRForm.bystanderName}
         onChangeText={(value) => setIRForm({ bystanderName: value })}
         error={errors.bystanderName}
-        variant="outlined"
+        variant="disabled"
+        disabled
       />
       <TextInput
         label="Contact Number"
@@ -67,7 +67,8 @@ const StepTwoContent = ({ goNextStep }) => {
         value={IRForm.phone}
         onChangeText={(value) => setIRForm({ phone: value })}
         error={errors.phone}
-        variant="outlined"
+        variant="disabled"
+        disabled
       />
       <Button
         label="Next"

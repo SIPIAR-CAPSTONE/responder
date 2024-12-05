@@ -1,5 +1,5 @@
 import { View, FlatList, ToastAndroid } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import moment from "moment";
 
 import AppBar from "../../components/ui/AppBar";
@@ -12,6 +12,7 @@ import { supabase } from "../../utils/supabase/config";
 import useBoundStore from "../../zustand/useBoundStore";
 import SortBottomSheet from "../../components/history/SortBottomSheet";
 import NotInternetAlert from "../../components/common/NoInternetAlert";
+import { useFocusEffect } from "@react-navigation/native";
 
 const HistoryScreen = () => {
   const { styles } = useStyles(stylesheet);
@@ -28,7 +29,6 @@ const HistoryScreen = () => {
     if (selectedSort === "created_at") {
       return new Date(a.created_at) - new Date(b.created_at);
     } else if (selectedSort === "address") {
-      // return String(a.address).localeCompare(String(b.address));
       return a.address > b.address ? 1 : -1;
     }
     //TODO: change this to created at later
@@ -51,7 +51,8 @@ const HistoryScreen = () => {
             incident_id,
             emergency_type,
             condition,
-            remarks
+            remarks,
+            is_created
         ),
         bystander:user_id (
             first_name,
@@ -66,8 +67,6 @@ const HistoryScreen = () => {
     if (error) {
       ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     } else {
-      console.log(JSON.stringify(data, null, 2));
-
       // Sort data by created_at
       const sortedData = data.sort(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
@@ -76,7 +75,6 @@ const HistoryScreen = () => {
       // Update Zustand with the first broadcast_id (or other logic for setting it)
       if (sortedData.length > 0) {
         setBroadcastId(sortedData[0].broadcast_id);
-        console.log("INITIAL LOAD B-ID: ", sortedData[0].broadcast_id);
       }
 
       // Update the component's local state
@@ -134,6 +132,13 @@ const HistoryScreen = () => {
     };
   }, [userMetaData["id"]]);
 
+  //* when screen is focus refetch  incident report history records
+  useFocusEffect(
+    useCallback(() => {
+      fetchBroadcastData();
+    }, [])
+  );
+
   return (
     <>
       <StatusBar />
@@ -155,10 +160,10 @@ const HistoryScreen = () => {
             barangay={item.barangay}
             landmark={item.landmark}
             created_at={item.created_at}
-            phone_number={item.bystander.phone_number}
+            phone_number={item.bystander?.phone_number}
             remarks={item.incident_history[0].remarks}
             condition={item.incident_history[0].condition}
-            isCreated={item?.isCreated}
+            is_created={item.incident_history[0].is_created}
             first_name={item?.bystander?.first_name}
             last_name={item?.bystander?.last_name}
           />

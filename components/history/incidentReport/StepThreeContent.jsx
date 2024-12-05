@@ -30,12 +30,9 @@ const StepThreeContent = () => {
   const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
+  console.log(IRForm);
   const handleSubmit = async () => {
     if (isFormValid(fields, IRForm, setErrors)) {
-      console.log("FORM DATAS: ", IRForm);
-      console.log("BROADCAST ID: ", broadcastId);
-
       try {
         setLoading(true);
 
@@ -45,13 +42,15 @@ const StepThreeContent = () => {
             address: IRForm["address"],
             barangay: IRForm["barangay"],
             landmark: IRForm["landmark"],
+            created_at: IRForm["date"],
+            isActive: "No",
           })
           .eq("broadcast_id", broadcastId);
 
         if (broadcastUpdateError) {
-          console.error(
-            "ERROR BROADCAST UPDATE: ",
-            broadcastUpdateError.message
+          ToastAndroid.show(
+            `ERROR BROADCAST UPDATE: ${broadcastUpdateError.message}`,
+            ToastAndroid.SHORT
           );
           return;
         }
@@ -62,11 +61,15 @@ const StepThreeContent = () => {
             emergency_type: IRForm["emergencyType"],
             condition: IRForm["condition"],
             remarks: IRForm["remarks"],
+            is_created: "Yes",
           })
           .eq("broadcast_id", broadcastId);
 
         if (incidentUpdateError) {
-          console.error("ERROR INCIDENT UPDATE: ", incidentUpdateError);
+          ToastAndroid.show(
+            `${incidentUpdateError.message}`,
+            ToastAndroid.SHORT
+          );
           return;
         }
 

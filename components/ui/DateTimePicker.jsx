@@ -19,7 +19,7 @@ const DateTimePicker = ({
   const currentThemeScheme = useBoundStore((state) => state.currentThemeScheme);
   const [open, setOpen] = useState(false);
   const date = moment(strDate).toDate();
-  const formattedDate = moment(date).format("LL");
+  const formattedDateTime = moment(date).format("MMMM DD YYYY - h:mm A");
 
   const handleOnCancel = () => setOpen(false);
   const handleOnPress = () => setOpen(true);
@@ -27,7 +27,6 @@ const DateTimePicker = ({
     setOpen(false);
     setDate({ date: date });
   };
-
   return (
     <View>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -47,19 +46,27 @@ const DateTimePicker = ({
         borderless
         style={[
           styles.input,
-          disabled && styles.inputDisabled,
           error && styles.inputError,
           styles.input.variants.variant[variant],
+          disabled && styles.inputDisabled,
         ]}
         onPress={handleOnPress}
+        disabled={disabled}
       >
         <View style={styles.birthdayFieldContent}>
-          <Text style={styles.birthdayPlaceholder}>{formattedDate}</Text>
+          <Text
+            style={[
+              styles.birthdayPlaceholder,
+              disabled && styles.textDisabled,
+            ]}
+          >
+            {formattedDateTime}
+          </Text>
           <View style={styles.dateValueContainer}>
             <Ionicons
               name="calendar-clear"
               size={18}
-              color={theme.colors.text}
+              color={disabled ? theme.colors.text3 : theme.colors.text}
             />
           </View>
         </View>
@@ -91,6 +98,11 @@ const stylesheet = createStyleSheet((theme) => ({
     },
   },
   inputDisabled: {
+    color: theme.colors.text3,
+    backgroundColor: theme.colors.secondary,
+    borderColor: theme.colors.secondary,
+  },
+  textDisabled: {
     color: theme.colors.text3,
   },
   inputError: {

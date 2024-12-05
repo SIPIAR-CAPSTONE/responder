@@ -16,7 +16,7 @@ export default function IncidentCard({
   phone_number,
   remarks,
   condition,
-  isCreated,
+  is_created,
   first_name,
   last_name,
 }) {
@@ -60,7 +60,6 @@ export default function IncidentCard({
 
   const { styles } = useStyles(stylesheet);
   const navigation = useNavigation();
-
   return (
     <View style={styles.card}>
       <View style={styles.leftColumn}>
@@ -90,7 +89,7 @@ export default function IncidentCard({
         </View>
         <Button
           style={styles.button}
-          label={`${isCreated === "Yes" ? "Edit" : "Create"} Report`}
+          label={`${is_created === "Yes" ? "Edit" : "Create"} Report`}
           onPress={() => {
             navigation.navigate("IncidentReportScreen");
             defaultIRFormSetter();
