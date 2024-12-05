@@ -13,6 +13,7 @@ import Layout from "../../components/common/Layout";
 import { isFormValid } from "../../utils/formValidation";
 import useBoundStore from "../../zustand/useBoundStore";
 import useUserMetadata from "../../hooks/useUserMetadata";
+import { ToastAndroid } from "react-native";
 
 const fields = [
   { name: "email", rules: [{ type: "required" }] },
@@ -30,7 +31,7 @@ const LoginScreen = () => {
   const [errors, setErrors] = useState({});
   const { styles } = useStyles(stylesheet);
   const setSession = useBoundStore((state) => state.setSession);
-  const { setState } = useUserMetadata();
+  const { setState: setUserMetadata } = useUserMetadata();
 
   //* PROFILE PICTURE SETTER
   const setProfilePicturePath = useBoundStore(
@@ -56,8 +57,8 @@ const LoginScreen = () => {
       };
       reader.readAsDataURL(data);
     } else if (error) {
-      //todo proper handling sooon
-      console.log("download image error:", error.message);
+      console.log("Login Image download error", error.message);
+      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     }
   };
 
@@ -76,14 +77,9 @@ const LoginScreen = () => {
           let errors = {};
           errors.password = error.message;
           setErrors(errors);
-          console.log("erroir lods");
         } else if (!error) {
-          //* call the setItem in which it encrypt the session and store in secure local storage
           setSession(data["session"]);
-
-          //* set session global state variables
-          setState(data["session"]);
-          console.log("session dataaaaaaa", data["session"]);
+          setUserMetadata(data["session"]);
 
           // //* CALL IMAGE DOWNLOADER FUNC
           imageDownload(data["session"]["user"]["user_metadata"]["email"]);

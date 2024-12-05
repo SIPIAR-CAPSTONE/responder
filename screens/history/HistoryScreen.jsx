@@ -37,7 +37,7 @@ const HistoryScreen = () => {
     }
   });
 
-  const fetchBroadcastData = async (id) => {
+  const fetchBroadcastData = async () => {
     const { data, error } = await supabase
       .from("broadcast")
       .select(

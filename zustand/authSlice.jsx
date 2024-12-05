@@ -48,18 +48,20 @@ export const createAuthSlice = (set, get) => ({
     })),
   setPasswordResetEmail: (value) => set({ passwordResetEmail: value }),
   setSession: async (session) => {
-    console.log("setting session");
-    const encryptedSession = await largeSecureStore.setItem("session", session);
+    const encryptedSession = await largeSecureStore.setItem(
+      "session.responder",
+      session
+    );
     set({ session: encryptedSession });
   },
   restoreSession: async () => {
-
     const { data } = await supabase.auth.getSession();
 
     if (data && data.session) {
       const sessionUserMetaData = data.session["user"]["user_metadata"];
       set({
         userMetaData: {
+          id: data.session.user.id,
           firstName: sessionUserMetaData["first_name"],
           middleName: sessionUserMetaData["middle_name"],
           lastName: sessionUserMetaData["last_name"],
@@ -73,13 +75,13 @@ export const createAuthSlice = (set, get) => ({
         },
       });
       set({ session: data.session });
-      await largeSecureStore.setItem("session", data.session);
+      await largeSecureStore.setItem("session.responder", data.session);
     } else {
       await get().removeSession();
     }
   },
   restoreSessionOffline: async () => {
-    const session = await largeSecureStore.getItem("session");
+    const session = await largeSecureStore.getItem("session.responder");
     if (session) {
       const sessionUserMetaData = session["user"]["user_metadata"];
       set({
@@ -103,7 +105,7 @@ export const createAuthSlice = (set, get) => ({
   },
   removeSession: async () => {
     set({ session: null });
-    await largeSecureStore.removeItem("session");
+    await largeSecureStore.removeItem("session.responder");
   },
   setAppIsReady: (value) => set({ appIsReady: value }),
   setResetPasswordSession: (value) => set({ resetPasswordSession: value }),
