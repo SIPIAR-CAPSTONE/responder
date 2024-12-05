@@ -1,36 +1,36 @@
-import { useState } from "react";
-import moment from "moment";
+import { useState } from 'react'
+import moment from 'moment'
 
-import Form from "../../common/Form";
-import FormHeader from "../../common/FormHeader";
-import TextInput from "../../ui/TextInput";
-import { useStyles, createStyleSheet } from "../../../hooks/useStyles";
-import Button from "../../ui/Button";
-import SectionTitle from "./SectionTitle";
-import useBoundStore from "../../../zustand/useBoundStore";
-import { isFormValid } from "../../../utils/formValidation";
+import Form from '../../common/Form'
+import FormHeader from '../../common/FormHeader'
+import TextInput from '../../ui/TextInput'
+import { useStyles, createStyleSheet } from '../../../hooks/useStyles'
+import Button from '../../ui/Button'
+import SectionTitle from './SectionTitle'
+import useBoundStore from '../../../zustand/useBoundStore'
+import { isFormValid } from '../../../utils/formValidation'
 
 const fields = [
   {
-    name: "bystanderName",
-    rules: [{ type: "required", message: "Bystander name is required." }],
+    name: 'bystanderName',
+    rules: [{ type: 'required', message: 'Bystander name is required.' }],
   },
   {
-    name: "phone",
+    name: 'phone',
     rules: [
-      { type: "required" },
-      { type: "validPhNumber" },
+      { type: 'required' },
+      { type: 'validPhNumber' },
       {
-        type: "exactLength",
+        type: 'exactLength',
         length: 11,
-        message: "Contact number should be exactly 11 digits long.",
+        message: 'Contact number should be exactly 11 digits long.',
       },
     ],
   },
-];
+]
 
 const StepTwoContent = ({ goNextStep }) => {
-  const { theme } = useStyles(stylesheet);
+  const { theme } = useStyles(stylesheet)
 
   const IRForm = useBoundStore((state) => state.incidentReportForm);
   const setIRForm = useBoundStore((state) => state.setIncidentReport);
@@ -39,11 +39,13 @@ const StepTwoContent = ({ goNextStep }) => {
   const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
 
   const handleSubmit = () => {
+    console.log('STEPO TWOOOO', IRForm['date']);
+
     if (isFormValid(fields, IRForm, setErrors)) {
-      goNextStep();
-      console.log("success2");
+      goNextStep()
+      console.log('success2')
     }
-  };
+  }
 
   return (
     <Form removeDefaultPaddingBottom removeDefaultPaddingHorizontal>
@@ -60,6 +62,8 @@ const StepTwoContent = ({ goNextStep }) => {
         error={errors.bystanderName}
         variant="disabled"
         disabled
+        variant="disabled"
+        disabled
       />
       <TextInput
         label="Contact Number"
@@ -69,6 +73,8 @@ const StepTwoContent = ({ goNextStep }) => {
         error={errors.phone}
         variant="disabled"
         disabled
+        variant="disabled"
+        disabled
       />
       <Button
         label="Next"
@@ -76,10 +82,10 @@ const StepTwoContent = ({ goNextStep }) => {
         onPress={handleSubmit}
       />
     </Form>
-  );
-};
+  )
+}
 
-export default StepTwoContent;
+export default StepTwoContent
 
 const stylesheet = createStyleSheet((theme) => ({
   textArea: {
@@ -92,7 +98,7 @@ const stylesheet = createStyleSheet((theme) => ({
     borderColor: theme.colors.primary,
   },
   toggleWrapper: {
-    flexDirection: "row",
+    flexDirection: 'row',
     columnGap: theme.spacing.sm,
   },
   toggleButton: {
@@ -104,4 +110,4 @@ const stylesheet = createStyleSheet((theme) => ({
   inactiveToggleLabel: {
     color: theme.colors.text,
   },
-}));
+}))
