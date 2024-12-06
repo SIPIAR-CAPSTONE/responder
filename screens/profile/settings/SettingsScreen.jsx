@@ -63,7 +63,7 @@ const SettingsScreen = () => {
       <ListItem
         size="medium"
         title="Notification"
-        renderIcon={() => (
+        renderTrailerIcon={() => (
           <CircularIcon name="notifications" variant="primary" size={14} />
         )}
         renderActionIcon={() => <NextActionIcon />}
@@ -82,7 +82,7 @@ const SettingsScreen = () => {
       <ListItem
         size="medium"
         title="Appearance"
-        renderIcon={() => (
+        renderTrailerIcon={() => (
           <CircularIcon name="color-palette" variant="primary" size={14} />
         )}
         renderActionIcon={() => <NextActionIcon />}

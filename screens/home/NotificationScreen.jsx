@@ -16,7 +16,7 @@ const NotificationScreen = () => {
   const renderItem = ({ item }) => (
     <ListItem
       size="large"
-      renderIcon={() => (
+      renderTrailerIcon={() => (
         <CircularIcon name="notifications" variant="primary" size={14} />
       )}
       title={item.type}
