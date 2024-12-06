@@ -41,34 +41,38 @@ const StepThreeContent = () => {
         const { error: broadcastUpdateError } = await supabase
           .from('broadcast')
           .update({
-            created_at: IRForm['date'],
-            address: IRForm['address'],
-            barangay: IRForm['barangay'],
-            landmark: IRForm['landmark'],
+            address: IRForm["address"],
+            barangay: IRForm["barangay"],
+            landmark: IRForm["landmark"],
+            created_at: IRForm["date"],
+            isActive: "No",
           })
           .eq('broadcast_id', broadcastId)
 
         if (broadcastUpdateError) {
-          console.error(
-            'ERROR BROADCAST UPDATE: ',
-            broadcastUpdateError.message,
-          )
-          return
+          ToastAndroid.show(
+            `ERROR BROADCAST UPDATE: ${broadcastUpdateError.message}`,
+            ToastAndroid.SHORT
+          );
+          return;
         }
 
         const { error: incidentUpdateError } = await supabase
           .from('incident_history')
           .update({
-            emergency_type: IRForm['emergencyType'],
-            condition: IRForm['condition'],
-            remarks: IRForm['remarks'],
-            is_created: 'Yes',
+            emergency_type: IRForm["emergencyType"],
+            condition: IRForm["condition"],
+            remarks: IRForm["remarks"],
+            is_created: "Yes",
           })
           .eq('broadcast_id', broadcastId)
 
         if (incidentUpdateError) {
-          console.error('ERROR INCIDENT UPDATE: ', incidentUpdateError)
-          return
+          ToastAndroid.show(
+            `${incidentUpdateError.message}`,
+            ToastAndroid.SHORT
+          );
+          return;
         }
         resetIncidentReport()
         setShowSuccessAlert(true)

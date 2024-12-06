@@ -1,5 +1,5 @@
-import { View,  SectionList } from "react-native";
-import React, { useState } from "react";
+import { View, SectionList } from "react-native";
+import React, { lazy, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Divider } from "react-native-paper";
 
@@ -8,15 +8,21 @@ import SectionItem from "../../../components/profile/SectionItem";
 import SectionHeader from "../../../components/profile/SectionHeader";
 import AppBar from "../../../components/ui/AppBar";
 import CircularIcon from "../../../components/ui/CircularIcon";
-import UserProfileCard from "../../../components/profile/UserProfileCard";
 import EditButton from "../../../components/profile/EditButton";
 import Layout from "../../../components/common/Layout";
-import ConfirmationDialog from "../../../components/ui/ConfirmationDialog";
 import AppBarTitle from "../../../components/ui/AppBarTitle";
+import useBoundStore from "../../../zustand/useBoundStore";
+const ConfirmationDialog = lazy(() =>
+  import("../../../components/ui/ConfirmationDialog")
+);
+const UserProfileCard = lazy(() =>
+  import("../../../components/profile/UserProfileCard")
+);
 
 const MyAccountScreen = () => {
   const navigation = useNavigation();
   const { styles } = useStyles(stylesheet);
+  const userMetaData = useBoundStore((state) => state.userMetaData);
   const [isConfirmationDialogVisible, setIsConfirmationDialogVisible] =
     useState(false);
 
@@ -28,17 +34,15 @@ const MyAccountScreen = () => {
     navigation.navigate("EditProfileScreen");
   };
 
-  const [profilePictureUri, setProfilePictureUri] = useState(null);
-
   const USER_DATA = [
     {
       title: "Personal Information",
       data: [
-        { label: "First Name", value: "Verseler" },
-        { label: "Middle Name", value: "F" },
-        { label: "Last Name", value: "Handuman" },
-        { label: "Suffix", value: null },
-        { label: "Phone", value: "09876543210" },
+        { label: "First Name", value: userMetaData["firstName"] },
+        { label: "Middle Name", value: userMetaData["middleName"] },
+        { label: "Last Name", value: userMetaData["lastName"] },
+        { label: "Suffix", value: userMetaData["suffix"] },
+        { label: "Phone", value: userMetaData["phone"] },
       ],
     },
   ];
@@ -71,9 +75,6 @@ const MyAccountScreen = () => {
         ListHeaderComponentStyle={styles.listHeaderContainer}
         ListHeaderComponent={
           <UserProfileCard
-            imageSource={profilePictureUri}
-            name="verseler kerr Handuman"
-            email="handuman.verselerkerr@gmail.com"
             renderFooter={() => <EditButton onPress={showConfirmationDialog} />}
           />
         }

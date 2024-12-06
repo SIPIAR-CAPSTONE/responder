@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Sipiar",
+    "name": "Sipiar: EMS",
     "slug": "responder",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/appIcon.png",
+    "icon": "./assets/AppIcon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splashscreen.png",
@@ -21,13 +21,13 @@
         }
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/appIcon.png",
+        "foregroundImage": "./assets/AppIcon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.sipiar.responder"
     },
     "web": {
-      "favicon": "./assets/appIcon.png"
+      "favicon": "./assets/AppIcon.png"
     },
     "extra": {
       "eas": {

@@ -26,7 +26,7 @@ const StepOneContent = ({ goNextStep }) => {
   const broadcastId = useBoundStore((state) => state.broadcastId);
   const [errors, setErrors] = useState({});
   const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
-  
+
   const handleSubmit = () => {
     if (isFormValid(fields, IRForm, setErrors)) {
       console.log("success");
@@ -77,6 +77,7 @@ const StepOneContent = ({ goNextStep }) => {
         date={IRForm.date}
         setDate={setIRForm}
         error={errors.date}
+        disabled
       />
       <Button
         label="Next"
