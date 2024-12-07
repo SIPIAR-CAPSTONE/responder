@@ -1,11 +1,12 @@
 import { Dialog, Portal, Button } from "react-native-paper";
 import { useMemo } from "react";
+import moment from "moment";
+import { Linking } from "react-native";
 
 import { getTimeGap, getDistanceGap } from "../../utils/calculateGap";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 import InfoField from "./InfoField";
-import moment from "moment";
-import { Linking } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const EMPTY_PLACEHOLDER = " - ";
 
@@ -23,7 +24,7 @@ const MarkerDialog = ({
   selectedMarker,
   userLocation,
 }) => {
-  const { styles } = useStyles(stylesheet);
+  const { styles, theme } = useStyles(stylesheet);
 
   // Get the full name of the selected marker, using the first and last name if available, otherwise use the EMPTY_PLACEHOLDER.
   const FULL_NAME = `${selectedMarker?.first_name} ${selectedMarker?.last_name}`;
@@ -71,6 +72,11 @@ const MarkerDialog = ({
     Linking.openURL(url);
   };
 
+  //TODO: diri
+  const handleRespondNow = () => {
+    console.log("respond now");
+  };
+
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={hideDialog}>
@@ -111,8 +117,23 @@ const MarkerDialog = ({
           <Button onPress={hideDialog} mode="text" rippleColor="rgba(0,0,0,0)">
             Close
           </Button>
-          <Button onPress={onOpenMap} mode="contained" style={styles.button}>
-            Directions
+          <Button
+            onPress={onOpenMap}
+            mode="contained"
+            style={styles.directionButton}
+          >
+            <MaterialCommunityIcons
+              name="google-maps"
+              size={22}
+              color={theme.colors.onPrimary}
+            />
+          </Button>
+          <Button
+            onPress={handleRespondNow}
+            mode="contained"
+            style={styles.respondNowButton}
+          >
+            Respond Now
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -131,8 +152,12 @@ const stylesheet = createStyleSheet((theme) => ({
     marginVertical: theme.spacing.xxs,
     rowGap: theme.spacing.xs,
   },
-  button: {
+  directionButton: {
     borderRadius: theme.borderRadius.base,
-    width: 110,
+    width: 60,
+  },
+  respondNowButton: {
+    borderRadius: theme.borderRadius.base,
+    width: 150,
   },
 }));
