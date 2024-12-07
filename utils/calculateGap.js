@@ -38,4 +38,10 @@ const isInvalidCoordinate = (coordinate) => {
   );
 };
 
-export { getDistanceGap, getTimeGap };
+const objectIsFalsy = (obj) => {
+  return !Object.keys(obj).some(function (k) {
+    return obj[k];
+  });
+};
+
+export { getDistanceGap, getTimeGap, objectIsFalsy };
