@@ -32,11 +32,11 @@ const fields = [
 const StepTwoContent = ({ goNextStep }) => {
   const { theme } = useStyles(stylesheet)
 
-  const IRForm = useBoundStore((state) => state.incidentReportForm)
-  const setIRForm = useBoundStore((state) => state.setIncidentReport)
-  const broadcastId = useBoundStore((state) => state.broadcastId)
-  const [errors, setErrors] = useState({})
-  const formattedDate = moment(IRForm?.date).format('dddd, MMMM DD, YYYY')
+  const IRForm = useBoundStore((state) => state.incidentReportForm);
+  const setIRForm = useBoundStore((state) => state.setIncidentReport);
+  const broadcastId = useBoundStore((state) => state.broadcastId);
+  const [errors, setErrors] = useState({});
+  const formattedDate = moment(IRForm?.date).format("dddd, MMMM DD, YYYY");
 
   const handleSubmit = () => {
     console.log('STEPO TWOOOO', IRForm['date']);
@@ -62,6 +62,8 @@ const StepTwoContent = ({ goNextStep }) => {
         error={errors.bystanderName}
         variant="disabled"
         disabled
+        variant="disabled"
+        disabled
       />
       <TextInput
         label="Contact Number"
@@ -69,6 +71,8 @@ const StepTwoContent = ({ goNextStep }) => {
         value={IRForm.phone}
         onChangeText={(value) => setIRForm({ phone: value })}
         error={errors.phone}
+        variant="disabled"
+        disabled
         variant="disabled"
         disabled
       />

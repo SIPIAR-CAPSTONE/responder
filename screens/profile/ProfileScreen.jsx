@@ -13,7 +13,6 @@ import CircularIcon from "../../components/ui/CircularIcon";
 import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import { supabase } from "../../utils/supabase/config";
-import { LargeSecureStore } from "../../utils/SecureLocalStorage";
 import useBoundStore from "../../zustand/useBoundStore";
 import useUserMetadata from "../../hooks/useUserMetadata";
 
@@ -25,9 +24,8 @@ const ProfileScreen = () => {
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
   const showLogoutDialog = () => setIsLogoutDialogVisible(true);
-  const largeSecureStore = new LargeSecureStore();
   const removeSession = useBoundStore((state) => state.removeSession);
-  const { removeState } = useUserMetadata();
+  const { removeState: removeUserMetadata } = useUserMetadata();
   const removeProfilePicturePath = useBoundStore(
     (state) => state.removeProfilePicturePath
   );
@@ -46,13 +44,8 @@ const ProfileScreen = () => {
       }
 
       if (!error) {
-        //* remove encrypted session from secure local storage
-        await largeSecureStore.removeItem("session");
-        //* remove encrypted session as a global state
         removeSession();
-
-        // //* remove global state variable
-        removeState();
+        removeUserMetadata();
 
         //* remove profile picture in local storage
         if (globalStateProfilePath) {
@@ -89,16 +82,12 @@ const ProfileScreen = () => {
 
   return (
     <Layout scrollable AppbarComponent={CustomAppBar}>
-      <UserProfileCard
-        name="Verseler kerr Handuman"
-        email="handuman.verselerkerr@gmail.com"
-        imageSource=""
-      />
+      <UserProfileCard />
       <View style={styles.listItems}>
         <ListItem
           size="medium"
           title="My Account"
-          renderIcon={() => (
+          renderTrailerIcon={() => (
             <CircularIcon name="person" variant="primary" size={12} />
           )}
           renderActionIcon={() => <NextActionIcon />}
@@ -107,7 +96,7 @@ const ProfileScreen = () => {
         <ListItem
           size="medium"
           title="Settings"
-          renderIcon={() => (
+          renderTrailerIcon={() => (
             <CircularIcon name="settings" variant="primary" size={12} />
           )}
           renderActionIcon={() => <NextActionIcon />}
@@ -116,7 +105,7 @@ const ProfileScreen = () => {
         <ListItem
           size="medium"
           title="Sign Out"
-          renderIcon={() => (
+          renderTrailerIcon={() => (
             <CircularIcon name="exit" variant="primary" size={12} />
           )}
           renderActionIcon={() => <NextActionIcon />}

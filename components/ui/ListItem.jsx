@@ -10,7 +10,7 @@ const ListItem = ({
   subTitleSize = 10,
   desc,
   descSize = 12,
-  renderIcon,
+  renderTrailerIcon,
   renderActionIcon,
   size = "small",
   onPress,
@@ -64,7 +64,7 @@ const ListItem = ({
         ]}
       >
         {/* Right Side: Leading Icon */}
-        {renderIcon && <View>{renderIcon()}</View>}
+        {renderTrailerIcon && <View>{renderTrailerIcon()}</View>}
         {/* Center to last Side: Text content */}
         <View style={styles.content}>
           {/* Title and subtitle */}

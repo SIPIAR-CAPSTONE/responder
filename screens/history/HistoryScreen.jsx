@@ -1,46 +1,45 @@
-import { View, FlatList, ToastAndroid } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import moment from 'moment'
+import { View, FlatList, ToastAndroid } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import moment from "moment";
 
-import AppBar from '../../components/ui/AppBar'
-import { createStyleSheet, useStyles } from '../../hooks/useStyles'
-import CircularIcon from '../../components/ui/CircularIcon'
-import IncidentCard from '../../components/history/IncidentCard'
-import StatusBar from '../../components/common/StatusBar'
-import AppBarTitle from '../../components/ui/AppBarTitle'
-import { supabase } from '../../utils/supabase/config'
-import useBoundStore from '../../zustand/useBoundStore'
-import SortBottomSheet from '../../components/history/SortBottomSheet'
-import NotInternetAlert from '../../components/common/NoInternetAlert'
+import AppBar from "../../components/ui/AppBar";
+import { createStyleSheet, useStyles } from "../../hooks/useStyles";
+import CircularIcon from "../../components/ui/CircularIcon";
+import IncidentCard from "../../components/history/IncidentCard";
+import StatusBar from "../../components/common/StatusBar";
+import AppBarTitle from "../../components/ui/AppBarTitle";
+import { supabase } from "../../utils/supabase/config";
+import useBoundStore from "../../zustand/useBoundStore";
+import SortBottomSheet from "../../components/history/SortBottomSheet";
+import NotInternetAlert from "../../components/common/NoInternetAlert";
 import { useFocusEffect } from "@react-navigation/native";
 
 const HistoryScreen = () => {
-  const { styles } = useStyles(stylesheet)
-  const [joinedData, setJoinedData] = useState([])
-  const userMetaData = useBoundStore((state) => state.userMetaData)
-  const setBroadcastId = useBoundStore((state) => state.setBroadcastId)
+  const { styles } = useStyles(stylesheet);
+  const [joinedData, setJoinedData] = useState([]);
+  const userMetaData = useBoundStore((state) => state.userMetaData);
+  const setBroadcastId = useBoundStore((state) => state.setBroadcastId);
 
-  const bottomSheetRef = useRef(null)
-  const [showSortSheet, setShowSortSheet] = useState(false)
-  const [selectedSort, setSelectedSort] = useState('created_at')
-  const closeSortSheet = () => setShowSortSheet(false)
+  const bottomSheetRef = useRef(null);
+  const [showSortSheet, setShowSortSheet] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("created_at");
+  const closeSortSheet = () => setShowSortSheet(false);
 
   const sortedIReport = joinedData.sort((a, b) => {
-    if (selectedSort === 'created_at') {
-      return new Date(a.created_at) - new Date(b.created_at)
-    } else if (selectedSort === 'address') {
-      // return String(a.address).localeCompare(String(b.address));
-      return a.address > b.address ? 1 : -1
+    if (selectedSort === "created_at") {
+      return new Date(a.created_at) - new Date(b.created_at);
+    } else if (selectedSort === "address") {
+      return a.address > b.address ? 1 : -1;
     }
     //TODO: change this to created at later
-    else if (selectedSort === 'condition') {
-      return a.condition > b.condition ? 1 : -1
+    else if (selectedSort === "condition") {
+      return a.condition > b.condition ? 1 : -1;
     }
-  })
+  });
 
-  const fetchBroadcastData = async (id) => {
+  const fetchBroadcastData = async () => {
     const { data, error } = await supabase
-      .from('broadcast')
+      .from("broadcast")
       .select(
         `
         broadcast_id,
@@ -53,55 +52,53 @@ const HistoryScreen = () => {
             emergency_type,
             condition,
             remarks,
-            is_created
+            is_created,
+            remarks
         ),
         bystander:user_id (
             first_name,
             last_name,
             phone_number
         )
-    `,
+    `
       )
       .eq('responder_id', userMetaData['id'])
 
     if (error) {
-      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT)
+      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     } else {
-      console.log(JSON.stringify(data, null, 2))
-
       // Sort data by created_at
       const sortedData = data.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at),
-      )
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
 
       // Update Zustand with the first broadcast_id (or other logic for setting it)
       if (sortedData.length > 0) {
-        setBroadcastId(sortedData[0].broadcast_id)
-        console.log('INITIAL LOAD B-ID: ', sortedData[0].broadcast_id)
+        setBroadcastId(sortedData[0].broadcast_id);
       }
 
       // Update the component's local state
-      setJoinedData(sortedData)
+      setJoinedData(sortedData);
     }
-  }
+  };
 
   useFocusEffect(
     useCallback(() => {
-      fetchBroadcastData(); 
+      fetchBroadcastData();
     }, [])
   );
 
   useEffect(() => {
-    fetchBroadcastData()
+    fetchBroadcastData();
 
     const broadcastChannel = supabase
-      .channel('broadcast-channel')
+      .channel("broadcast-channel")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'broadcast' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "broadcast" },
         async (payload) => {
           const { data, error } = await supabase
-            .from('broadcast')
+            .from("broadcast")
             .select(
               `
             broadcast_id,
@@ -114,34 +111,41 @@ const HistoryScreen = () => {
               remarks
               is_created
             )
-          `,
+          `
             )
             .eq('broadcast_id', payload.new.broadcast_id)
             .eq('responder_id', userMetaData['id'])
 
           if (!error && data.length > 0) {
-            console.log('listener', JSON.stringify(data, null, 2))
+            console.log("listener", JSON.stringify(data, null, 2));
 
             // Update Zustand with the new broadcast_id
-            setBroadcastId(payload.new.broadcast_id)
+            setBroadcastId(payload.new.broadcast_id);
 
             setJoinedData((prevData) => {
               const updatedData = prevData.filter(
-                (item) => item.broadcast_id !== payload.new.broadcast_id,
-              )
+                (item) => item.broadcast_id !== payload.new.broadcast_id
+              );
               return [...updatedData, data[0]].sort(
-                (a, b) => moment(b.created_at) - moment(a.created_at),
-              )
-            })
+                (a, b) => moment(b.created_at) - moment(a.created_at)
+              );
+            });
           }
-        },
+        }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      broadcastChannel.unsubscribe()
-    }
-  }, [userMetaData['id']])
+      broadcastChannel.unsubscribe();
+    };
+  }, [userMetaData["id"]]);
+
+  //* when screen is focus refetch  incident report history records
+  useFocusEffect(
+    useCallback(() => {
+      fetchBroadcastData();
+    }, [])
+  );
 
   return (
     <>
@@ -165,10 +169,10 @@ const HistoryScreen = () => {
             barangay={item.barangay}
             landmark={item.landmark}
             created_at={item.created_at}
-            phone_number={item?.bystander?.phone_number}
+            phone_number={item.bystander?.phone_number}
             remarks={item.incident_history[0].remarks}
             condition={item.incident_history[0].condition}
-            isCreated={item.incident_history[0].is_created}
+            is_created={item.incident_history[0]?.is_created}
             first_name={item?.bystander?.first_name}
             last_name={item?.bystander?.last_name}
           />
@@ -184,14 +188,14 @@ const HistoryScreen = () => {
       />
       <NotInternetAlert />
     </>
-  )
-}
+  );
+};
 
-export default HistoryScreen
+export default HistoryScreen;
 
 const stylesheet = createStyleSheet(() => ({
   content: {
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
-}))
+}));

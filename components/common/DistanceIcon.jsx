@@ -3,14 +3,12 @@ import { Text } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 
-const DistanceIcon = ({ distance, status }) => {
+const DistanceIcon = ({ distance }) => {
   const { styles, theme } = useStyles(stylesheet);
-
-  const iconColor = status ? theme.colors.green : theme.colors.primary;
 
   return (
     <View style={styles.container}>
-      <Feather name="map-pin" size={22} color={iconColor} />
+      <Feather name="map-pin" size={22} color={theme.colors.primary} />
       <Text style={styles.distance}>{distance}</Text>
     </View>
   );
