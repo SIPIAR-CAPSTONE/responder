@@ -1,10 +1,11 @@
+import { Text } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+
 import Layout from "../../components/common/Layout";
 import AppBar from "../../components/ui/AppBar";
 import CircularIcon from "../../components/ui/CircularIcon";
 import LogoTitle from "../../components/navigation/LogoTitle";
-import { useNavigation } from "@react-navigation/native";
-import AssignedEmergencyAlert from "../../components/home/AssginedEmergencyAlert";
-import { Text } from "react-native-paper";
+import AssignedEmergencyAlert from "../../components/home/AssignedEmergencyAlert";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ const HomeScreen = () => {
           marginBottom: 10,
         }}
       >
-        Assigned Emergency Request
+        Assigned Emergency Alert
       </Text>
       <AssignedEmergencyAlert />
     </Layout>

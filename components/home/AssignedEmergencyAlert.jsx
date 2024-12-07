@@ -1,75 +1,79 @@
 import { View } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Divider, Text } from "react-native-paper";
+import moment from "moment";
+import { useCallback, useMemo } from "react";
+
 import { createStyleSheet, useStyles } from "../../hooks/useStyles";
 import InfoField from "./InfoField";
-import { useEffect, useMemo, useState } from "react";
 import { getDistanceGap, getTimeGap } from "../../utils/calculateGap";
-import moment from "moment";
 import useLocation from "../../hooks/useLocation";
 import Button from "../ui/Button";
-import { useNavigation } from "@react-navigation/native";
+import useBroadcast from "../../hooks/useBroadcast";
 
 const EMPTY_PLACEHOLDER = " - ";
 
 export default function AssignedEmergencyAlert() {
+  const { assignedEmergencyAlert, refetchAssignedAlert } = useBroadcast();
   const { styles } = useStyles(stylesheet);
   const navigation = useNavigation();
   const { userLocation } = useLocation();
-  const [assignedAlert, setAssignedAlert] = useState(null);
 
-  const fullRequesterName = assignedAlert
-    ? `${assignedAlert?.first_name} ${assignedAlert?.last_name}`
+  const fullRequesterName = assignedEmergencyAlert
+    ? `${assignedEmergencyAlert?.bystander?.first_name} ${assignedEmergencyAlert?.bystander?.last_name}`
     : EMPTY_PLACEHOLDER;
+
+  const alertCoordinate = {
+    latitude: assignedEmergencyAlert?.latitude,
+    longitude: assignedEmergencyAlert?.longitude,
+  };
   const distanceGap = useMemo(
     () =>
-      assignedAlert?.coordinate
-        ? getDistanceGap(userLocation, assignedAlert?.coordinate)
+      alertCoordinate
+        ? getDistanceGap(userLocation, alertCoordinate)
         : EMPTY_PLACEHOLDER,
-    [userLocation, assignedAlert?.coordinate]
+    [userLocation, alertCoordinate]
   );
 
   const timeGap = useMemo(
     () =>
-      assignedAlert?.createdAt
-        ? getTimeGap(assignedAlert?.createdAt)
+      assignedEmergencyAlert?.created_at
+        ? getTimeGap(assignedEmergencyAlert?.created_at)
         : EMPTY_PLACEHOLDER,
-    [assignedAlert?.createdAt]
+    [assignedEmergencyAlert?.created_at]
   );
 
   const dateRequested = useMemo(
     () =>
-      assignedAlert?.createdAt
-        ? moment(assignedAlert?.createdAt).format("LL")
+      assignedEmergencyAlert?.created_at
+        ? moment(assignedEmergencyAlert?.created_at).format("LL")
         : EMPTY_PLACEHOLDER,
-    [assignedAlert?.createdAt]
+    [assignedEmergencyAlert?.created_at]
   );
 
-  useEffect(() => {
-    function getAssignedAlert() {
-      //!TODO: fetching
-      setAssignedAlert(SAMPLE_DATA[0]);
-    }
-
-    getAssignedAlert();
-  }, []);
-
-  if (!assignedAlert) {
-    console.log("no assigned alert");
+  if (!assignedEmergencyAlert) {
     return (
       <View style={[styles.content, styles.center]}>
         <Text variant="bodySmall" style={styles.emptyLabel}>
-          No Assigned emergency request
+          No Assigned Emergency Alert
         </Text>
       </View>
     );
   }
+
+  //* when screen is focus refetch alerts
+  useFocusEffect(
+    useCallback(() => {
+      refetchAssignedAlert();
+    }, [])
+  );
 
   return (
     <View style={styles.content}>
       <InfoField
         icon="map"
         label="Location"
-        value={assignedAlert?.address || EMPTY_PLACEHOLDER}
+        value={assignedEmergencyAlert?.address || EMPTY_PLACEHOLDER}
         iconBackgroundColor="#dddae4"
         iconColor="#7A288A"
       />
@@ -107,8 +111,7 @@ export default function AssignedEmergencyAlert() {
         style={styles.viewButton}
         onPress={() =>
           navigation.navigate("MapViewScreen", {
-            initialCoordinate: assignedAlert?.coordinate,
-            selectedAlertId: assignedAlert?.id,
+            initialCoordinate: alertCoordinate,
           })
         }
       />
@@ -136,16 +139,3 @@ const stylesheet = createStyleSheet((theme) => ({
     color: theme.colors.text2,
   },
 }));
-
-const SAMPLE_DATA = [
-  {
-    id: 1,
-    distance: 500,
-    createdAt: "2024-07-01T05:22:31.269Z",
-    address: "Elmwood Park, 24 Oak Street",
-    condition: true,
-    first_name: "Alex",
-    last_name: "Smith",
-    coordinate: { latitude: 8.424359, longitude: 124.637703 },
-  },
-];

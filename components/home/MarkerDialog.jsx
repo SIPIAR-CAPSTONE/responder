@@ -2,11 +2,11 @@ import { Dialog, Portal, Button } from "react-native-paper";
 import { useMemo } from "react";
 import moment from "moment";
 import { Linking } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { getTimeGap, getDistanceGap } from "../../utils/calculateGap";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 import InfoField from "./InfoField";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const EMPTY_PLACEHOLDER = " - ";
 
@@ -27,45 +27,53 @@ const MarkerDialog = ({
   const { styles, theme } = useStyles(stylesheet);
 
   // Get the full name of the selected marker, using the first and last name if available, otherwise use the EMPTY_PLACEHOLDER.
-  const FULL_NAME = `${selectedMarker?.first_name} ${selectedMarker?.last_name}`;
+  const FULL_NAME = `${selectedMarker?.bystander?.first_name} ${selectedMarker?.bystander?.last_name}`;
   const name = useMemo(
     () =>
-      selectedMarker?.first_name || selectedMarker?.last_name
+      selectedMarker?.bystander?.first_name ||
+      selectedMarker?.bystander?.last_name
         ? FULL_NAME
         : EMPTY_PLACEHOLDER,
-    [selectedMarker?.first_name, selectedMarker?.last_name]
+    [
+      selectedMarker?.bystander?.first_name,
+      selectedMarker?.bystander?.last_name,
+    ]
   );
 
+  const alertCoordinate = {
+    latitude: selectedMarker?.latitude,
+    longitude: selectedMarker?.longitude,
+  };
   const distanceGap = useMemo(
     () =>
-      selectedMarker?.coordinate
-        ? getDistanceGap(userLocation, selectedMarker?.coordinate)
+      alertCoordinate
+        ? getDistanceGap(userLocation, alertCoordinate)
         : EMPTY_PLACEHOLDER,
-    [userLocation, selectedMarker?.coordinate]
+    [userLocation, alertCoordinate]
   );
 
   const timeGap = useMemo(
     () =>
-      selectedMarker?.createdAt
-        ? getTimeGap(selectedMarker?.createdAt)
+      selectedMarker?.created_at
+        ? getTimeGap(selectedMarker?.created_at)
         : EMPTY_PLACEHOLDER,
-    [selectedMarker?.createdAt]
+    [selectedMarker?.created_at]
   );
 
   const dateRequested = useMemo(
     () =>
-      selectedMarker?.createdAt
-        ? moment(selectedMarker?.createdAt).format("LL")
+      selectedMarker?.created_at
+        ? moment(selectedMarker?.created_at).format("LL")
         : EMPTY_PLACEHOLDER,
-    [selectedMarker?.createdAt]
+    [selectedMarker?.created_at]
   );
 
   const onOpenMap = () => {
     const originLat = userLocation?.latitude;
     const originLng = userLocation?.longitude;
     const origin = `${originLat},${originLng}`;
-    const destinationLat = selectedMarker?.coordinate?.latitude;
-    const destinationLng = selectedMarker?.coordinate?.longitude;
+    const destinationLat = selectedMarker?.latitude;
+    const destinationLng = selectedMarker?.longitude;
     const destination = `${destinationLat},${destinationLng}`;
     const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
 

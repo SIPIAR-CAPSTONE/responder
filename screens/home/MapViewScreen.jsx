@@ -9,26 +9,27 @@ import NotInternetAlert from "../../components/common/NoInternetAlert";
 import AppBar from "../../components/ui/AppBar";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import CircularIcon from "../../components/ui/CircularIcon";
+import useBroadcast from "../../hooks/useBroadcast";
 
 const MapviewScreen = ({ route }) => {
+  const { assignedEmergencyAlert } = useBroadcast();
   const navigation = useNavigation();
-  const { initialCoordinate, selectedAlertId } = route.params;
-  const [alerts, setAlerts] = useState(TEMP_ALERTS_DATA);
+  const { initialCoordinate } = route.params;
+
   const [region, setRegion] = useState({
-    latitude: Number(initialCoordinate.latitude),
-    longitude: Number(initialCoordinate.longitude),
+    latitude: initialCoordinate?.latitude,
+    longitude: initialCoordinate?.longitude,
+
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
 
   //location of the user of the device
   const { userLocation } = useLocation();
-  const initialSelectedAlert = alerts.find(
-    (alert) => alert.id === selectedAlertId
-  );
+
   //show alert dialog on marker click
-  const [selectedAlert, setSelectedAlert] = useState(initialSelectedAlert);
-  const [isDialogVisible, setIsDialogVisible] = useState(true);
+  const [selectedAlert, setSelectedAlert] = useState({});
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
   const showDialog = (alert) => {
     setIsDialogVisible(true);
     setSelectedAlert(alert);
@@ -40,19 +41,6 @@ const MapviewScreen = ({ route }) => {
     setIsDialogVisible(false);
     setTimeout(() => setSelectedAlert(null), 200);
   };
-
-  const alertMarkers = alerts.map((alert) => {
-    return (
-      <Marker
-        key={alert.id}
-        onPress={() => showDialog(alert)}
-        coordinate={{ ...alert.coordinate }}
-      >
-        <Image source={require("../../assets/MapPin.png")} style={styles.pin} />
-      </Marker>
-    );
-  });
-
   return (
     <>
       <AppBar>
@@ -72,7 +60,21 @@ const MapviewScreen = ({ route }) => {
         showsCompass
         showsTraffic
       >
-        {alertMarkers}
+        {assignedEmergencyAlert?.latitude &&
+          assignedEmergencyAlert?.longitude && (
+            <Marker
+              coordinate={{
+                latitude: assignedEmergencyAlert?.latitude,
+                longitude: assignedEmergencyAlert?.longitude,
+              }}
+              onPress={() => showDialog(assignedEmergencyAlert)}
+            >
+              <Image
+                source={require("../../assets/MapPin.png")}
+                style={styles.pin}
+              />
+            </Marker>
+          )}
       </MapView>
 
       {isDialogVisible && (
@@ -102,17 +104,3 @@ const styles = StyleSheet.create({
     height: 40,
   },
 });
-
-//!remove this later
-const TEMP_ALERTS_DATA = [
-  {
-    id: 1,
-    distance: 500,
-    createdAt: "2024-07-01T05:22:31.269Z",
-    address: "Elmwood Park, 24 Oak Street",
-    condition: true,
-    first_name: "Alex",
-    last_name: "Smith",
-    coordinate: { latitude: 8.424359, longitude: 124.637703 },
-  },
-];
