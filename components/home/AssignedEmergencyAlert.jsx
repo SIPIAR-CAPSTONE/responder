@@ -10,6 +10,8 @@ import { getDistanceGap, getTimeGap } from "../../utils/calculateGap";
 import useLocation from "../../hooks/useLocation";
 import Button from "../ui/Button";
 import useBroadcast from "../../hooks/useBroadcast";
+import { objectIsFalsy } from "../../utils/calculateGap";
+import EmptyAlertPlaceHolder from "./EmptyAlertPlaceholder";
 
 const EMPTY_PLACEHOLDER = " - ";
 
@@ -18,6 +20,8 @@ export default function AssignedEmergencyAlert() {
   const { styles } = useStyles(stylesheet);
   const navigation = useNavigation();
   const { userLocation } = useLocation();
+
+  if (objectIsFalsy(assignedEmergencyAlert)) return <EmptyAlertPlaceHolder />;
 
   const fullRequesterName = assignedEmergencyAlert
     ? `${assignedEmergencyAlert?.bystander?.first_name} ${assignedEmergencyAlert?.bystander?.last_name}`
@@ -68,6 +72,10 @@ export default function AssignedEmergencyAlert() {
     }, [])
   );
 
+  const handleRespondNow = () => {
+    console.log("respond now");
+  };
+
   return (
     <View style={styles.content}>
       <InfoField
@@ -106,15 +114,23 @@ export default function AssignedEmergencyAlert() {
         iconBackgroundColor="#FFD8CC"
         iconColor="#BB655D"
       />
-      <Button
-        label="View"
-        style={styles.viewButton}
-        onPress={() =>
-          navigation.navigate("MapViewScreen", {
-            initialCoordinate: alertCoordinate,
-          })
-        }
-      />
+      <View style={styles.buttonsWrapper}>
+        <Button
+          label="View"
+          variant="outlined"
+          style={styles.viewButton}
+          onPress={() =>
+            navigation.navigate("MapViewScreen", {
+              initialCoordinate: alertCoordinate,
+            })
+          }
+        />
+        <Button
+          label="Respond Now"
+          style={styles.respondNowButton}
+          onPress={handleRespondNow}
+        />
+      </View>
     </View>
   );
 }
@@ -132,8 +148,17 @@ const stylesheet = createStyleSheet((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  viewButton: {
+  buttonsWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    columnGap: theme.spacing.xxs,
     marginTop: theme.spacing.base,
+  },
+  viewButton: {
+    flex: 1,
+  },
+  respondNowButton: {
+    flex: 1,
   },
   emptyLabel: {
     color: theme.colors.text2,
