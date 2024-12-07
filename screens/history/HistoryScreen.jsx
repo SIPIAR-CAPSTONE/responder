@@ -62,7 +62,6 @@ const HistoryScreen = () => {
         )
     `,
       )
-      .eq('isActive', 'No')
       .eq('responder_id', userMetaData['id'])
 
     if (error) {
@@ -118,7 +117,6 @@ const HistoryScreen = () => {
           `,
             )
             .eq('broadcast_id', payload.new.broadcast_id)
-            .eq('isActive', 'No')
             .eq('responder_id', userMetaData['id'])
 
           if (!error && data.length > 0) {
