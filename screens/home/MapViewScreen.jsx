@@ -14,6 +14,7 @@ import useMapDirection from "../../hooks/useMapDirection";
 import { objectIsFalsy } from "../../utils/calculateGap";
 
 const MapviewScreen = ({ route }) => {
+  const { userLocation, loading } = useLocation();
   const navigation = useNavigation();
   const { assignedEmergencyAlert } = useBroadcast();
   const { initialOriginCoordinates, destinationCoordinates } = route.params;
@@ -27,10 +28,12 @@ const MapviewScreen = ({ route }) => {
   });
 
   //location of the user of the device
-  const { userLocation } = useLocation();
+
   const { fetchRoute, routeCoordinates } = useMapDirection();
 
   useEffect(() => {
+    if (loading) return;
+
     if (objectIsFalsy(userLocation)) {
       fetchRoute(initialOriginCoordinates, destinationCoordinates);
     } else {

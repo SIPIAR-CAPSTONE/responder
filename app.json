@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Sipiar: EMS",
+    "name": "Sipiar EMS",
     "slug": "responder",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,7 @@
     "android": {
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBUwWdPeNbbqxYVlUklbDMo4F_eRhLxtDw"
+          "apiKey": "AIzaSyDxCmFAbp9j-OL1vghfagvlDrjnJMEB_qM"
         }
       },
       "adaptiveIcon": {
