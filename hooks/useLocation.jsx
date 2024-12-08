@@ -4,22 +4,20 @@ import { promptForEnableLocationIfNeeded } from "react-native-android-location-e
 import { useNavigation } from "@react-navigation/native";
 import { Linking, Alert } from "react-native";
 
-/**
- * @returns {Object} An object containing user location.
- */
 const useLocation = () => {
   const [userLocation, setUserLocation] = useState({});
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
   // On first screen load ask user permision to access their location
   useEffect(() => {
     (async () => {
       try {
-        // Ask permision to access location
         let { status } = await Location.requestForegroundPermissionsAsync();
 
-        // If permision is not granted display warning
         if (status !== "granted") {
+          setLoading(false);
+
           Alert.alert(
             "Permission Denied",
             "You cannot access this feature because you denied the permision request. Please go to the app setting and change the Location permision to access this feature.",
@@ -44,21 +42,20 @@ const useLocation = () => {
         // Listen to user location to track user location changes
         const foregroundSubscrition = await Location.watchPositionAsync(
           {
-            accuracy: Location.Accuracy.High,
-            distanceInterval: 10,
+            accuracy: Location.Accuracy.Highest,
+            distanceInterval: 1,
           },
           (location) => {
-            let coordinate = {
+            setUserLocation({
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
-            };
-            setUserLocation(coordinate);
+            });
+            setLoading(false);
           }
         );
         return () => foregroundSubscrition.remove();
       } catch (error) {
         if (error.code == "ERR_LOCATION_SETTINGS_UNSATISFIED") {
-          // Display warning alert
           Alert.alert(
             "Warning: Location not enabled",
             "To access this feature your location should be turned on.",
@@ -126,7 +123,15 @@ const useLocation = () => {
     }
   }
 
-  return { userLocation };
+  async function reverseGeocode({ longitude, latitude }) {
+    const reverseGeocodedAddress = await Location.reverseGeocodeAsync({
+      latitude: latitude,
+      longitude: longitude,
+    });
+    return reverseGeocodedAddress;
+  }
+
+  return { userLocation, loading, reverseGeocode };
 };
 
 export default useLocation;
