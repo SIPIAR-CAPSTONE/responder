@@ -1,8 +1,8 @@
-import { View } from "react-native";
+import { ToastAndroid, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Divider, Text } from "react-native-paper";
+import { Divider } from "react-native-paper";
 import moment from "moment";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { createStyleSheet, useStyles } from "../../hooks/useStyles";
 import InfoField from "./InfoField";
@@ -12,6 +12,7 @@ import Button from "../ui/Button";
 import useBroadcast from "../../hooks/useBroadcast";
 import { objectIsFalsy } from "../../utils/calculateGap";
 import EmptyAlertPlaceHolder from "./EmptyAlertPlaceholder";
+import { supabase } from "../../utils/supabase/config";
 
 const EMPTY_PLACEHOLDER = " - ";
 
@@ -20,11 +21,10 @@ export default function AssignedEmergencyAlert() {
   const { styles } = useStyles(stylesheet);
   const navigation = useNavigation();
   const { userLocation } = useLocation();
-
-  if (objectIsFalsy(assignedEmergencyAlert)) return <EmptyAlertPlaceHolder />;
+  const [loading, setLoading] = useState(false);
 
   const fullRequesterName = assignedEmergencyAlert
-    ? `${assignedEmergencyAlert?.bystander?.first_name} ${assignedEmergencyAlert?.bystander?.last_name}`
+    ? `${assignedEmergencyAlert?.USER?.first_name} ${assignedEmergencyAlert?.USER?.last_name}`
     : EMPTY_PLACEHOLDER;
 
   const alertCoordinate = {
@@ -41,39 +41,49 @@ export default function AssignedEmergencyAlert() {
 
   const timeGap = useMemo(
     () =>
-      assignedEmergencyAlert?.created_at
-        ? getTimeGap(assignedEmergencyAlert?.created_at)
+      assignedEmergencyAlert?.date
+        ? getTimeGap(assignedEmergencyAlert?.date)
         : EMPTY_PLACEHOLDER,
-    [assignedEmergencyAlert?.created_at]
+    [assignedEmergencyAlert?.date]
   );
 
   const dateRequested = useMemo(
     () =>
-      assignedEmergencyAlert?.created_at
-        ? moment(assignedEmergencyAlert?.created_at).format("LL")
+      assignedEmergencyAlert?.date
+        ? moment(assignedEmergencyAlert?.date).format("LL")
         : EMPTY_PLACEHOLDER,
-    [assignedEmergencyAlert?.created_at]
+    [assignedEmergencyAlert?.date]
   );
 
-  if (!assignedEmergencyAlert) {
-    return (
-      <View style={[styles.content, styles.center]}>
-        <Text variant="bodySmall" style={styles.emptyLabel}>
-          No Assigned Emergency Alert
-        </Text>
-      </View>
-    );
-  }
-
-  //* when screen is focus refetch alerts
+  //* when screen is focus refecth alerts
   useFocusEffect(
     useCallback(() => {
       refetchAssignedAlert();
     }, [])
   );
 
-  const handleRespondNow = () => {
-    console.log("respond now");
+  if (objectIsFalsy(assignedEmergencyAlert)) {
+    return <EmptyAlertPlaceHolder />;
+  }
+
+  const handleRespondNow = async () => {
+    try {
+      setLoading(true);
+
+      const { error } = await supabase
+        .from("BROADCAST")
+        .update({ status: "On Going" })
+        .eq("broadcast_id", assignedEmergencyAlert?.broadcast_id);
+
+      if (error) {
+        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      } else {
+      }
+    } catch (error) {
+      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,6 +124,13 @@ export default function AssignedEmergencyAlert() {
         iconBackgroundColor="#FFD8CC"
         iconColor="#BB655D"
       />
+      <InfoField
+        icon="calendar"
+        label="Status"
+        value={assignedEmergencyAlert?.status}
+        iconBackgroundColor="#dddae4"
+        iconColor="#7A288A"
+      />
       <View style={styles.buttonsWrapper}>
         <Button
           label="View"
@@ -121,15 +138,19 @@ export default function AssignedEmergencyAlert() {
           style={styles.viewButton}
           onPress={() =>
             navigation.navigate("MapViewScreen", {
-              initialCoordinate: alertCoordinate,
+              initialOriginCoordinates: userLocation,
+              destinationCoordinates: alertCoordinate,
             })
           }
         />
-        <Button
-          label="Respond Now"
-          style={styles.respondNowButton}
-          onPress={handleRespondNow}
-        />
+        {assignedEmergencyAlert?.status === "Pending" && (
+          <Button
+            label="Respond Now"
+            style={styles.respondNowButton}
+            onPress={handleRespondNow}
+            isLoading={loading}
+          />
+        )}
       </View>
     </View>
   );

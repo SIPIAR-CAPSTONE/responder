@@ -6,7 +6,7 @@ import useBoundStore from "../zustand/useBoundStore";
 export default function useBroadcast() {
   const userMetaData = useBoundStore((state) => state.userMetaData);
   const responderId = userMetaData?.id;
-  const [assignedEmergencyAlert, setAssignedEmergencyAlert] = useState([]);
+  const [assignedEmergencyAlert, setAssignedEmergencyAlert] = useState({});
   const [loading, setLoading] = useState(false);
   const assignedEmergencyAlertLength = assignedEmergencyAlert.length;
   let pollingInterval;
@@ -15,16 +15,15 @@ export default function useBroadcast() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("broadcast")
+        .from("BROADCAST")
         .select(
           `
         *,
-        bystander: user_id (first_name, last_name)
+        USER: user_id (first_name, last_name)
       `
         )
         .eq("responder_id", responderId)
-        .eq("isActive", "Yes")
-        .single();
+        .neq("status", "Completed");
 
       if (error) {
         ToastAndroid.show(
@@ -32,8 +31,11 @@ export default function useBroadcast() {
           ToastAndroid.SHORT
         );
       }
-      if (data) {
-        setAssignedEmergencyAlert(data);
+      if (data.length > 0) {
+        setAssignedEmergencyAlert(data[0]);
+      }
+      if (data.length === 0) {
+        setAssignedEmergencyAlert({});
       }
     } catch (error) {
       ToastAndroid.show(

@@ -1,5 +1,5 @@
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
-import { useState } from "react";
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -10,15 +10,17 @@ import AppBar from "../../components/ui/AppBar";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import CircularIcon from "../../components/ui/CircularIcon";
 import useBroadcast from "../../hooks/useBroadcast";
+import useMapDirection from "../../hooks/useMapDirection";
+import { objectIsFalsy } from "../../utils/calculateGap";
 
 const MapviewScreen = ({ route }) => {
-  const { assignedEmergencyAlert } = useBroadcast();
   const navigation = useNavigation();
-  const { initialCoordinate } = route.params;
+  const { assignedEmergencyAlert } = useBroadcast();
+  const { initialOriginCoordinates, destinationCoordinates } = route.params;
 
   const [region, setRegion] = useState({
-    latitude: initialCoordinate?.latitude,
-    longitude: initialCoordinate?.longitude,
+    latitude: destinationCoordinates?.latitude,
+    longitude: destinationCoordinates?.longitude,
 
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
@@ -26,21 +28,20 @@ const MapviewScreen = ({ route }) => {
 
   //location of the user of the device
   const { userLocation } = useLocation();
+  const { fetchRoute, routeCoordinates } = useMapDirection();
 
-  //show alert dialog on marker click
-  const [selectedAlert, setSelectedAlert] = useState({});
+  useEffect(() => {
+    if (objectIsFalsy(userLocation)) {
+      fetchRoute(initialOriginCoordinates, destinationCoordinates);
+    } else {
+      fetchRoute(userLocation, destinationCoordinates);
+    }
+  }, []);
+
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const showDialog = (alert) => {
-    setIsDialogVisible(true);
-    setSelectedAlert(alert);
-  };
+  const showDialog = () => setIsDialogVisible(true);
+  const hideDialog = () => setIsDialogVisible(false);
 
-  const hideDialog = () => {
-    //hide the dialog first before removing all data pf selected alert
-    //to prevent the flickering issue
-    setIsDialogVisible(false);
-    setTimeout(() => setSelectedAlert(null), 200);
-  };
   return (
     <>
       <AppBar>
@@ -67,7 +68,7 @@ const MapviewScreen = ({ route }) => {
                 latitude: assignedEmergencyAlert?.latitude,
                 longitude: assignedEmergencyAlert?.longitude,
               }}
-              onPress={() => showDialog(assignedEmergencyAlert)}
+              onPress={showDialog}
             >
               <Image
                 source={require("../../assets/MapPin.png")}
@@ -75,13 +76,18 @@ const MapviewScreen = ({ route }) => {
               />
             </Marker>
           )}
+        <Polyline
+          coordinates={routeCoordinates}
+          strokeWidth={4}
+          strokeColor={"red"}
+        />
       </MapView>
 
       {isDialogVisible && (
         <MarkerDialog
           visible={isDialogVisible}
           hideDialog={hideDialog}
-          selectedMarker={selectedAlert}
+          selectedMarker={assignedEmergencyAlert}
           userLocation={userLocation}
         />
       )}
