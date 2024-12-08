@@ -1,80 +1,80 @@
 import { Dialog, Portal, Button } from "react-native-paper";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import moment from "moment";
-import { Linking } from "react-native";
 
 import { getTimeGap, getDistanceGap } from "../../utils/calculateGap";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 import InfoField from "./InfoField";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { supabase } from "../../utils/supabase/config";
+import { ToastAndroid } from "react-native";
 
 const EMPTY_PLACEHOLDER = " - ";
 
-/**
- * Component that displays a dialog with information about a marker.
- *
- * @param {boolean} props.visible - Whether the dialog should be visible.
- * @param {Function} props.hideDialog - The function to call when the dialog should be hidden.
- * @param {Object} props.selectedMarker - The selected marker to display information about selected alert.
- * @param {Object} props.userLocation - The user's location.
- */
 const MarkerDialog = ({
   visible,
   hideDialog,
   selectedMarker,
   userLocation,
 }) => {
-  const { styles, theme } = useStyles(stylesheet);
+  const { styles } = useStyles(stylesheet);
+  const [loading, setLoading] = useState(false);
 
   // Get the full name of the selected marker, using the first and last name if available, otherwise use the EMPTY_PLACEHOLDER.
-  const FULL_NAME = `${selectedMarker?.first_name} ${selectedMarker?.last_name}`;
+  const FULL_NAME = `${selectedMarker?.USER?.first_name} ${selectedMarker?.USER?.last_name}`;
   const name = useMemo(
     () =>
-      selectedMarker?.first_name || selectedMarker?.last_name
+      selectedMarker?.USER?.first_name || selectedMarker?.USER?.last_name
         ? FULL_NAME
         : EMPTY_PLACEHOLDER,
-    [selectedMarker?.first_name, selectedMarker?.last_name]
+    [selectedMarker?.USER?.first_name, selectedMarker?.USER?.last_name]
   );
 
+  const alertCoordinate = {
+    latitude: selectedMarker?.latitude,
+    longitude: selectedMarker?.longitude,
+  };
   const distanceGap = useMemo(
     () =>
-      selectedMarker?.coordinate
-        ? getDistanceGap(userLocation, selectedMarker?.coordinate)
+      alertCoordinate
+        ? getDistanceGap(userLocation, alertCoordinate)
         : EMPTY_PLACEHOLDER,
-    [userLocation, selectedMarker?.coordinate]
+    [userLocation, alertCoordinate]
   );
 
   const timeGap = useMemo(
     () =>
-      selectedMarker?.createdAt
-        ? getTimeGap(selectedMarker?.createdAt)
+      selectedMarker?.date
+        ? getTimeGap(selectedMarker?.date)
         : EMPTY_PLACEHOLDER,
-    [selectedMarker?.createdAt]
+    [selectedMarker?.date]
   );
 
   const dateRequested = useMemo(
     () =>
-      selectedMarker?.createdAt
-        ? moment(selectedMarker?.createdAt).format("LL")
+      selectedMarker?.date
+        ? moment(selectedMarker?.date).format("LL")
         : EMPTY_PLACEHOLDER,
-    [selectedMarker?.createdAt]
+    [selectedMarker?.date]
   );
 
-  const onOpenMap = () => {
-    const originLat = userLocation?.latitude;
-    const originLng = userLocation?.longitude;
-    const origin = `${originLat},${originLng}`;
-    const destinationLat = selectedMarker?.coordinate?.latitude;
-    const destinationLng = selectedMarker?.coordinate?.longitude;
-    const destination = `${destinationLat},${destinationLng}`;
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
+  const handleRespondNow = async () => {
+    try {
+      setLoading(true);
 
-    Linking.openURL(url);
-  };
+      const { error } = await supabase
+        .from("BROADCAST")
+        .update({ status: "On Going" })
+        .eq("broadcast_id", selectedMarker?.broadcast_id);
 
-  //TODO: diri
-  const handleRespondNow = () => {
-    console.log("respond now");
+      if (error) {
+        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      } else {
+      }
+    } catch (error) {
+      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -86,7 +86,7 @@ const MarkerDialog = ({
         <Dialog.Content style={styles.infoFieldsContainer}>
           <InfoField
             icon="user"
-            label="User"
+            label="Bystander"
             value={name}
             iconBackgroundColor="#FBF2DD"
             iconColor="#D2BD84"
@@ -112,29 +112,28 @@ const MarkerDialog = ({
             iconBackgroundColor="#FFD8CC"
             iconColor="#BB655D"
           />
+          <InfoField
+            icon="calendar"
+            label="Status"
+            value={selectedMarker?.status}
+            iconBackgroundColor="#dddae4"
+            iconColor="#7A288A"
+          />
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={hideDialog} mode="text" rippleColor="rgba(0,0,0,0)">
             Close
           </Button>
-          <Button
-            onPress={onOpenMap}
-            mode="contained"
-            style={styles.directionButton}
-          >
-            <MaterialCommunityIcons
-              name="google-maps"
-              size={22}
-              color={theme.colors.onPrimary}
-            />
-          </Button>
-          <Button
-            onPress={handleRespondNow}
-            mode="contained"
-            style={styles.respondNowButton}
-          >
-            Respond Now
-          </Button>
+          {selectedMarker?.status === "Pending" && (
+            <Button
+              onPress={handleRespondNow}
+              mode="contained"
+              style={styles.respondNowButton}
+              loading={loading}
+            >
+              Respond Now
+            </Button>
+          )}
         </Dialog.Actions>
       </Dialog>
     </Portal>

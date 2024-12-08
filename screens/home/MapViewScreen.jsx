@@ -1,5 +1,5 @@
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
-import { useState } from "react";
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -9,49 +9,38 @@ import NotInternetAlert from "../../components/common/NoInternetAlert";
 import AppBar from "../../components/ui/AppBar";
 import AppBarTitle from "../../components/ui/AppBarTitle";
 import CircularIcon from "../../components/ui/CircularIcon";
+import useBroadcast from "../../hooks/useBroadcast";
+import useMapDirection from "../../hooks/useMapDirection";
+import { objectIsFalsy } from "../../utils/calculateGap";
 
 const MapviewScreen = ({ route }) => {
   const navigation = useNavigation();
-  const { initialCoordinate, selectedAlertId } = route.params;
-  const [alerts, setAlerts] = useState(TEMP_ALERTS_DATA);
+  const { assignedEmergencyAlert } = useBroadcast();
+  const { initialOriginCoordinates, destinationCoordinates } = route.params;
+
   const [region, setRegion] = useState({
-    latitude: Number(initialCoordinate.latitude),
-    longitude: Number(initialCoordinate.longitude),
+    latitude: destinationCoordinates?.latitude,
+    longitude: destinationCoordinates?.longitude,
+
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
 
   //location of the user of the device
   const { userLocation } = useLocation();
-  const initialSelectedAlert = alerts.find(
-    (alert) => alert.id === selectedAlertId
-  );
-  //show alert dialog on marker click
-  const [selectedAlert, setSelectedAlert] = useState(initialSelectedAlert);
-  const [isDialogVisible, setIsDialogVisible] = useState(true);
-  const showDialog = (alert) => {
-    setIsDialogVisible(true);
-    setSelectedAlert(alert);
-  };
+  const { fetchRoute, routeCoordinates } = useMapDirection();
 
-  const hideDialog = () => {
-    //hide the dialog first before removing all data pf selected alert
-    //to prevent the flickering issue
-    setIsDialogVisible(false);
-    setTimeout(() => setSelectedAlert(null), 200);
-  };
+  useEffect(() => {
+    if (objectIsFalsy(userLocation)) {
+      fetchRoute(initialOriginCoordinates, destinationCoordinates);
+    } else {
+      fetchRoute(userLocation, destinationCoordinates);
+    }
+  }, []);
 
-  const alertMarkers = alerts.map((alert) => {
-    return (
-      <Marker
-        key={alert.id}
-        onPress={() => showDialog(alert)}
-        coordinate={{ ...alert.coordinate }}
-      >
-        <Image source={require("../../assets/MapPin.png")} style={styles.pin} />
-      </Marker>
-    );
-  });
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const showDialog = () => setIsDialogVisible(true);
+  const hideDialog = () => setIsDialogVisible(false);
 
   return (
     <>
@@ -72,14 +61,33 @@ const MapviewScreen = ({ route }) => {
         showsCompass
         showsTraffic
       >
-        {alertMarkers}
+        {assignedEmergencyAlert?.latitude &&
+          assignedEmergencyAlert?.longitude && (
+            <Marker
+              coordinate={{
+                latitude: assignedEmergencyAlert?.latitude,
+                longitude: assignedEmergencyAlert?.longitude,
+              }}
+              onPress={showDialog}
+            >
+              <Image
+                source={require("../../assets/MapPin.png")}
+                style={styles.pin}
+              />
+            </Marker>
+          )}
+        <Polyline
+          coordinates={routeCoordinates}
+          strokeWidth={4}
+          strokeColor={"red"}
+        />
       </MapView>
 
       {isDialogVisible && (
         <MarkerDialog
           visible={isDialogVisible}
           hideDialog={hideDialog}
-          selectedMarker={selectedAlert}
+          selectedMarker={assignedEmergencyAlert}
           userLocation={userLocation}
         />
       )}
@@ -102,17 +110,3 @@ const styles = StyleSheet.create({
     height: 40,
   },
 });
-
-//!remove this later
-const TEMP_ALERTS_DATA = [
-  {
-    id: 1,
-    distance: 500,
-    createdAt: "2024-07-01T05:22:31.269Z",
-    address: "Elmwood Park, 24 Oak Street",
-    condition: true,
-    first_name: "Alex",
-    last_name: "Smith",
-    coordinate: { latitude: 8.424359, longitude: 124.637703 },
-  },
-];

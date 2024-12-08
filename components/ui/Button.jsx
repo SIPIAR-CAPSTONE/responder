@@ -24,7 +24,10 @@ const Button = ({
         styles.variant[variant],
         customStyle,
       ]}
-      contentStyle={styles.buttonContent}
+      contentStyle={[
+        styles.buttonContent,
+        variant === "outlined" && { paddingVertical: 2.5 },
+      ]}
       disabled={isLoading}
       loading={isLoading}
       {...buttonProps}
