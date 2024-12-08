@@ -31,6 +31,7 @@ export default function AssignedEmergencyAlert() {
     latitude: assignedEmergencyAlert?.latitude,
     longitude: assignedEmergencyAlert?.longitude,
   };
+  
   const distanceGap = useMemo(
     () =>
       alertCoordinate
@@ -55,7 +56,7 @@ export default function AssignedEmergencyAlert() {
     [assignedEmergencyAlert?.date]
   );
 
-  //* when screen is focus refecth alerts
+  //* when screen is focus refetch alerts
   useFocusEffect(
     useCallback(() => {
       refetchAssignedAlert();
@@ -125,7 +126,7 @@ export default function AssignedEmergencyAlert() {
         iconColor="#BB655D"
       />
       <InfoField
-        icon="calendar"
+        icon="git-commit"
         label="Status"
         value={assignedEmergencyAlert?.status}
         iconBackgroundColor="#dddae4"

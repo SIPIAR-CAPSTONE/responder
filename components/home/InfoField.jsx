@@ -15,8 +15,8 @@ const InfoField = ({ icon, label, value, iconColor, iconBackgroundColor }) => {
         <Feather name={icon} size={16} color={iconColor} />
       </View>
       {/* Container for the label and value */}
-      <View>
-        <Text style={styles.fieldValue} variant="titleMedium">
+      <View style={styles.content}>
+        <Text style={styles.fieldValue} variant="titleMedium" numberOfLines={1}>
           {value}
         </Text>
         <Text style={styles.fieldLabel} variant="bodySmall">
@@ -40,6 +40,9 @@ const stylesheet = createStyleSheet((theme) => ({
     padding: theme.spacing.md,
     backgroundColor: theme.colors.background,
     borderRadius: theme.borderRadius.full,
+  },
+  content: {
+    flex: 1,
   },
   fieldValue: {
     height: 25,
