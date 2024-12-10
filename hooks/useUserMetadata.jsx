@@ -18,7 +18,7 @@ const useUserMetadata = () => {
         barangay: session['user']['user_metadata']['barangay'],
         street: session['user']['user_metadata']['street'],
         houseNumber: session['user']['user_metadata']['house_number'],
-        email: session['user']['user_metadata']['email'],
+        email: session['user']['email'],
       })
     } catch (error) {
       //todo: proper error handling soon

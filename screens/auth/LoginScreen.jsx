@@ -41,7 +41,7 @@ const LoginScreen = () => {
   //* DOWNLOAD PROFILE PICTURE OF AUTHENTICATED RESPONDER
   const imageDownload = async (email) => {
     const { data, error } = await supabase.storage
-      .from("responder")
+      .from("bystander")
       .download(`profile_picture/${email}`);
 
     if (!error) {
@@ -78,11 +78,12 @@ const LoginScreen = () => {
           errors.password = error.message;
           setErrors(errors);
         } else if (!error) {
-          setSession(data["session"]);
+          console.log('data', data["session"]);
+          await setSession(data["session"]);
           setUserMetadata(data["session"]);
 
           // //* CALL IMAGE DOWNLOADER FUNC
-          imageDownload(data["session"]["user"]["user_metadata"]["email"]);
+          imageDownload(data["session"]["user"]["email"]);
         }
       }
     } finally {
