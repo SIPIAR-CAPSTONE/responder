@@ -22,12 +22,12 @@ const HistoryScreen = () => {
 
   const bottomSheetRef = useRef(null);
   const [showSortSheet, setShowSortSheet] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("created_at");
+  const [selectedSort, setSelectedSort] = useState("date");
   const closeSortSheet = () => setShowSortSheet(false);
 
   const sortedIReport = joinedData.sort((a, b) => {
-    if (selectedSort === "created_at") {
-      return new Date(a.created_at) - new Date(b.created_at);
+    if (selectedSort === "date") {
+      return new Date(a.date) - new Date(b.date);
     } else if (selectedSort === "address") {
       return a.address > b.address ? 1 : -1;
     }
@@ -39,37 +39,22 @@ const HistoryScreen = () => {
 
   const fetchBroadcastData = async () => {
     const { data, error } = await supabase
-      .from("broadcast")
-      .select(
-        `
-        broadcast_id,
-        address,
-        barangay,
-        landmark,
-        created_at,
-        incident_history (
-            incident_id,
-            emergency_type,
-            condition,
-            remarks,
-            is_created,
-            remarks
-        ),
-        bystander:user_id (
-            first_name,
-            last_name,
-            phone_number
-        )
-    `
+      .from("BROADCAST")
+      .select(`
+        *,
+        USER:user_id (
+          *
+        )`
       )
       .eq('responder_id', userMetaData['id'])
 
     if (error) {
       ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     } else {
+      console.log('HISTORY - DATA', data);
       // Sort data by created_at
       const sortedData = data.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        (a, b) => new Date(b.date) - new Date(a.date)
       );
 
       // Update Zustand with the first broadcast_id (or other logic for setting it)
@@ -95,42 +80,10 @@ const HistoryScreen = () => {
       .channel("broadcast-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "broadcast" },
-        async (payload) => {
-          const { data, error } = await supabase
-            .from("broadcast")
-            .select(
-              `
-            broadcast_id,
-            address,
-            created_at,
-            incident_history (
-              incident_id,
-              emergency_type,
-              condition,
-              remarks
-              is_created
-            )
-          `
-            )
-            .eq('broadcast_id', payload.new.broadcast_id)
-            .eq('responder_id', userMetaData['id'])
-
-          if (!error && data.length > 0) {
-            console.log("listener", JSON.stringify(data, null, 2));
-
-            // Update Zustand with the new broadcast_id
-            setBroadcastId(payload.new.broadcast_id);
-
-            setJoinedData((prevData) => {
-              const updatedData = prevData.filter(
-                (item) => item.broadcast_id !== payload.new.broadcast_id
-              );
-              return [...updatedData, data[0]].sort(
-                (a, b) => moment(b.created_at) - moment(a.created_at)
-              );
-            });
-          }
+        { event: "*", schema: "public", table: "BROADCAST" },
+        async () => {
+          console.log('NEW INCIDENT - DATA');
+          fetchBroadcastData()
         }
       )
       .subscribe();
@@ -138,7 +91,7 @@ const HistoryScreen = () => {
     return () => {
       broadcastChannel.unsubscribe();
     };
-  }, [userMetaData["id"]]);
+  },[]);
 
   //* when screen is focus refetch  incident report history records
   useFocusEffect(
@@ -163,18 +116,18 @@ const HistoryScreen = () => {
         ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
         renderItem={({ item }) => (
           <IncidentCard
-            broadcastId={item.broadcast_id} // Pass unique broadcastId
-            incident_id={item.incident_history[0].incident_id}
+            broadcastId={item.broadcast_id}
+            incident_id={item.broadcast_id}
             address={item.address}
             barangay={item.barangay}
             landmark={item.landmark}
-            created_at={item.created_at}
-            phone_number={item.bystander?.phone_number}
-            remarks={item.incident_history[0].remarks}
-            condition={item.incident_history[0].condition}
-            is_created={item.incident_history[0]?.is_created}
-            first_name={item?.bystander?.first_name}
-            last_name={item?.bystander?.last_name}
+            created_at={item.date}
+            phone_number={item.USER?.phone_number}
+            remarks={item.remarks}
+            condition={item.condition}
+            status={item.status}
+            first_name={item?.USER?.first_name}
+            last_name={item?.USER?.last_name}
           />
         )}
         contentContainerStyle={styles.content}

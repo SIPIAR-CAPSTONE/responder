@@ -39,37 +39,21 @@ const StepThreeContent = () => {
         setLoading(true)
 
         const { error: broadcastUpdateError } = await supabase
-          .from('broadcast')
+          .from('BROADCAST')
           .update({
             address: IRForm["address"],
             barangay: IRForm["barangay"],
             landmark: IRForm["landmark"],
-            created_at: IRForm["date"],
-            isActive: "No",
+            date: IRForm["date"],
+            status: "Completed",
+            condition: IRForm["condition"],
+            remarks: IRForm["remarks"]
           })
           .eq('broadcast_id', broadcastId)
 
         if (broadcastUpdateError) {
           ToastAndroid.show(
             `ERROR BROADCAST UPDATE: ${broadcastUpdateError.message}`,
-            ToastAndroid.SHORT
-          );
-          return;
-        }
-
-        const { error: incidentUpdateError } = await supabase
-          .from('incident_history')
-          .update({
-            emergency_type: IRForm["emergencyType"],
-            condition: IRForm["condition"],
-            remarks: IRForm["remarks"],
-            is_created: "Yes",
-          })
-          .eq('broadcast_id', broadcastId)
-
-        if (incidentUpdateError) {
-          ToastAndroid.show(
-            `${incidentUpdateError.message}`,
             ToastAndroid.SHORT
           );
           return;
@@ -108,20 +92,20 @@ const StepThreeContent = () => {
       <SectionTitle title="Condition" />
       <View style={styles.toggleWrapper}>
         <Button
-          label="Not Stable"
+          label="Unstable"
           variant="outlined"
           style={[
             styles.toggleButton,
-            !IRForm.condition || IRForm.condition === 'not stable'
+            !IRForm.condition || IRForm.condition === 'Unstable'
               ? styles.activeUnstableToggleButton
               : styles.inactiveToggleButton,
           ]}
           labelStyle={
-            IRForm.condition === 'not stable'
+            IRForm.condition === 'Unstable'
               ? styles.activeUnstableToggleLabel
               : styles.inactiveToggleLabel
           }
-          onPress={() => setIRForm({ condition: 'not stable' })}
+          onPress={() => setIRForm({ condition: 'Unstable' })}
           disabled={loading}
         />
         <Button
@@ -130,16 +114,16 @@ const StepThreeContent = () => {
           rippleColor="#d0f9c5"
           style={[
             styles.toggleButton,
-            IRForm.condition === 'stable'
+            IRForm.condition === 'Stable'
               ? styles.activeStableToggleButton
               : styles.inactiveToggleButton,
           ]}
           labelStyle={
-            IRForm.condition === 'stable'
+            IRForm.condition === 'Stable'
               ? styles.activeStableToggleLabel
               : styles.inactiveToggleLabel
           }
-          onPress={() => setIRForm({ condition: 'stable' })}
+          onPress={() => setIRForm({ condition: 'Stable' })}
           disabled={loading}
         />
       </View>
