@@ -12,9 +12,6 @@ const ResetPasswordScreen = lazy(() =>
 const TokenVerificationScreen = lazy(() =>
   import("../screens/auth/TokenVerificationScreen")
 );
-const NotificationScreen = lazy(() =>
-  import("../screens/home/NotificationScreen")
-);
 const MapViewScreen = lazy(() => import("../screens/home/MapViewScreen"));
 const MyAccountScreen = lazy(() =>
   import("../screens/profile/myAccount/MyAccountScreen")
@@ -24,9 +21,6 @@ const EditProfileScreen = lazy(() =>
 );
 const EditPasswordScreen = lazy(() =>
   import("../screens/profile/myAccount/EditPasswordScreen")
-);
-const SettingsScreen = lazy(() =>
-  import("../screens/profile/settings/SettingsScreen")
 );
 const IncidentReportScreen = lazy(() =>
   import("../screens/history/IncidentReportScreen")
@@ -67,11 +61,6 @@ export const SignedInStack = (
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="NotificationScreen"
-      component={NotificationScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
       name="MapViewScreen"
       component={MapViewScreen}
       options={{ headerShown: false }}
@@ -94,11 +83,6 @@ export const SignedInStack = (
     <Stack.Screen
       name="EditPasswordScreen"
       component={EditPasswordScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="SettingsScreen"
-      component={SettingsScreen}
       options={{ headerShown: false }}
     />
   </>
