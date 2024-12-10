@@ -71,9 +71,12 @@ export default function AssignedEmergencyAlert() {
     try {
       setLoading(true);
 
+      const currentDate = moment();
+
+
       const { error } = await supabase
         .from("BROADCAST")
-        .update({ status: "On Going" })
+        .update({ status: "On Going", response_time: currentDate })
         .eq("broadcast_id", assignedEmergencyAlert?.broadcast_id);
 
       if (error) {
