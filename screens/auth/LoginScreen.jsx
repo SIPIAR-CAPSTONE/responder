@@ -40,24 +40,27 @@ const LoginScreen = () => {
 
   //* DOWNLOAD PROFILE PICTURE OF AUTHENTICATED RESPONDER
   const imageDownload = async (email) => {
-    const { data, error } = await supabase.storage
-      .from("bystander")
-      .download(`profile_picture/${email}`);
+    try {
+      const { data, error } = await supabase.storage
+        .from("bystander")
+        .download(`profile_picture/${email}`);
 
-    if (!error) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64data = reader.result.split(",")[1];
-        const uri = FileSystem.documentDirectory + `${email}`;
+      if (!error) {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64data = reader.result.split(",")[1];
+          const uri = FileSystem.documentDirectory + `${email}`;
 
-        await FileSystem.writeAsStringAsync(uri, base64data, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        setProfilePicturePath(uri);
-      };
-      reader.readAsDataURL(data);
-    } else if (error) {
-      console.log("Login Image download error", error.message);
+          await FileSystem.writeAsStringAsync(uri, base64data, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          setProfilePicturePath(uri);
+        };
+        reader.readAsDataURL(data);
+      } else if (error) {
+        console.log("Login Image download error", error.message);
+      }
+    } catch (error) {
       ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
     }
   };
@@ -78,7 +81,7 @@ const LoginScreen = () => {
           errors.password = error.message;
           setErrors(errors);
         } else if (!error) {
-          console.log('data', data["session"]);
+          console.log("data", data["session"]);
           await setSession(data["session"]);
           setUserMetadata(data["session"]);
 
