@@ -23,10 +23,13 @@ const StepThreeContent = () => {
   const { styles, theme } = useStyles(stylesheet)
   const navigation = useNavigation()
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
+  const userMetaData = useBoundStore((state) => state.userMetaData);
 
   const IRForm = useBoundStore((state) => state.incidentReportForm)
   const setIRForm = useBoundStore((state) => state.setIncidentReport)
-  const resetIncidentReport = useBoundStore((state) => state.resetIncidentReport)
+  const resetIncidentReport = useBoundStore(
+    (state) => state.resetIncidentReport,
+  )
 
   const broadcastId = useBoundStore((state) => state.broadcastId)
   const formattedDate = moment(IRForm?.date).format('dddd, MMMM DD, YYYY')
@@ -41,26 +44,41 @@ const StepThreeContent = () => {
         const { error: broadcastUpdateError } = await supabase
           .from('BROADCAST')
           .update({
-            address: IRForm["address"],
-            barangay: IRForm["barangay"],
-            landmark: IRForm["landmark"],
-            date: IRForm["date"],
-            status: "Completed",
-            condition: IRForm["condition"],
-            remarks: IRForm["remarks"]
+            address: IRForm['address'],
+            barangay: IRForm['barangay'],
+            landmark: IRForm['landmark'],
+            date: IRForm['date'],
+            status: 'Completed',
+            condition: IRForm['condition'],
+            remarks: IRForm['remarks'],
           })
           .eq('broadcast_id', broadcastId)
 
         if (broadcastUpdateError) {
           ToastAndroid.show(
             `ERROR BROADCAST UPDATE: ${broadcastUpdateError.message}`,
-            ToastAndroid.SHORT
-          );
-          return;
+            ToastAndroid.SHORT,
+          )
+          return
         }
+console.log('METADATA - ID',  userMetaData['id']);
+        const { error: responderUpdateError } = await supabase
+          .from('RESPONDER')
+          .update({
+            is_available: true,
+          })
+          .eq('user_id', userMetaData['id'])
+
+        if (responderUpdateError) {
+          ToastAndroid.show(
+            `ERROR BROADCAST UPDATE: ${responderUpdateError.message}`,
+            ToastAndroid.SHORT,
+          )
+          return
+        }
+
         resetIncidentReport()
         setShowSuccessAlert(true)
-
       } catch (error) {
         ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT)
       } finally {
