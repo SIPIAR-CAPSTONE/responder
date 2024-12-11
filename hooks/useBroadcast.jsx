@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../utils/supabase/config";
 import { ToastAndroid } from "react-native";
+
+import { supabase } from "../utils/supabase/config";
 import useBoundStore from "../zustand/useBoundStore";
 
 export default function useBroadcast() {
@@ -12,6 +13,8 @@ export default function useBroadcast() {
   let pollingInterval;
 
   const fetchAssignedAlert = async () => {
+    if (!responderId) return;
+
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -27,14 +30,14 @@ export default function useBroadcast() {
 
       if (error) {
         ToastAndroid.show(
-          `Error fetching alerts: ${error.message}`,
+          `Error fetching alerts: ${error?.message}`,
           ToastAndroid.SHORT
         );
       }
-      if (data.length > 0) {
+      if (data?.length > 0) {
         setAssignedEmergencyAlert(data[0]);
       }
-      if (data.length === 0) {
+      if (data?.length === 0) {
         setAssignedEmergencyAlert({});
       }
     } catch (error) {
@@ -53,6 +56,8 @@ export default function useBroadcast() {
    *
    */
   useEffect(() => {
+    if (!responderId) return;
+
     fetchAssignedAlert();
 
     //refetch every 10 seconds
@@ -63,7 +68,7 @@ export default function useBroadcast() {
     return () => {
       clearInterval(pollingInterval);
     };
-  }, []);
+  }, [responderId]);
 
   /*
    *
