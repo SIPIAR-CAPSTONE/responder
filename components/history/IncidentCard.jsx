@@ -93,7 +93,10 @@ export default function IncidentCard({
           style={styles.button}
           label={`${status === "Completed" ? "Edit" : "Create"} Report`}
           onPress={() => {
-            navigation.navigate("IncidentReportScreen", { broadcastId });
+            navigation.navigate("IncidentReportScreen", {
+              broadcastId,
+              status,
+            });
             defaultIRFormSetter();
           }}
         />
