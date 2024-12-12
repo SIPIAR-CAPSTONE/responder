@@ -31,7 +31,7 @@ export default function AssignedEmergencyAlert() {
     latitude: assignedEmergencyAlert?.latitude,
     longitude: assignedEmergencyAlert?.longitude,
   };
-  
+
   const distanceGap = useMemo(
     () =>
       alertCoordinate
@@ -73,7 +73,6 @@ export default function AssignedEmergencyAlert() {
 
       const currentDate = moment();
 
-
       const { error } = await supabase
         .from("BROADCAST")
         .update({ status: "On Going", response_time: currentDate })
@@ -89,6 +88,8 @@ export default function AssignedEmergencyAlert() {
       setLoading(false);
     }
   };
+
+  if (!assignedEmergencyAlert) return <EmptyAlertPlaceHolder />;
 
   return (
     <View style={styles.content}>
