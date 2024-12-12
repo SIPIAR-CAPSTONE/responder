@@ -82,10 +82,8 @@ export default function IncidentCard({
             <MaterialIcons name="my-location" size={24} color="blue" />
           </View>
           <View style={styles.addresses}>
-            <Text variant="bodySmall">
-              <Text numberOfLines={2} variant="bodyMedium">
-                {address}
-              </Text>
+            <Text numberOfLines={2} variant="bodyMedium">
+              {address}
             </Text>
           </View>
         </View>
