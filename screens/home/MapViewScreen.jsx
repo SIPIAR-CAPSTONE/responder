@@ -11,6 +11,7 @@ import AppBarTitle from "../../components/ui/AppBarTitle";
 import CircularIcon from "../../components/ui/CircularIcon";
 import useBroadcast from "../../hooks/useBroadcast";
 import useMapDirection from "../../hooks/useMapDirection";
+import ConfirmationDialog from "../../components/ui/ConfirmationDialog";
 
 const MapviewScreen = ({ route }) => {
   const { userLocation, loading } = useLocation();
@@ -92,6 +93,8 @@ const MapviewScreen = ({ route }) => {
           userLocation={userLocation}
         />
       )}
+
+      {loading && <ConfirmationDialog isVisible={loading} loading={loading} />}
 
       <NotInternetAlert />
     </>

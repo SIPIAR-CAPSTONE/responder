@@ -26,7 +26,7 @@ const ConfirmationDialog = ({
         style={[styles.dialog, containerStyle]}
         dismissable={dismissable}
       >
-        <Dialog.Title style={styles.title}>{title}</Dialog.Title>
+        {title && <Dialog.Title style={styles.title}>{title}</Dialog.Title>}
         {loading ? (
           <Dialog.Content style={styles.dialogLoadingContent}>
             <ActivityIndicator size="large" />
