@@ -18,7 +18,7 @@ function getDistanceGap(userCoordinate, selectedCoordinate) {
     return " - ";
   }
 
-  const gapDistance = getPreciseDistance(userCoordinate, selectedCoordinate);
+  const gapDistance = getPreciseDistance(userCoordinate, selectedCoordinate, 2);
   const distanceLength = String(gapDistance).length;
   const formattedGapDistance =
     distanceLength > 2
