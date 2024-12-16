@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import useImagePicker from "../../hooks/useImagePicker";
 import { useStyles, createStyleSheet } from "../../hooks/useStyles";
 
-const EditUserProfileCard = ({ name, image, setImage }) => {
+const EditUserProfileCard = ({ name, image, setImage, disabled }) => {
   const { styles, theme } = useStyles(stylesheet);
   const firstNameInitial = name[0];
 
@@ -18,6 +18,7 @@ const EditUserProfileCard = ({ name, image, setImage }) => {
         borderless
         style={styles.button}
         onPress={() => pickImage(setImage)}
+        disabled={disabled}
       >
         <View style={styles.icon}>
           <Ionicons
