@@ -137,7 +137,7 @@ export default function AssignedEmergencyAlert() {
         iconColor="#7A288A"
       />
       <View style={styles.buttonsWrapper}>
-        {assignedEmergencyAlert?.status === "Pending" ? (
+        {assignedEmergencyAlert?.status === "Pending" || loading ? (
           <Button
             label="Respond Now"
             style={styles.respondNowButton}
