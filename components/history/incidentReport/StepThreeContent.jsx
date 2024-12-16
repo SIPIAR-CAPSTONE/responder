@@ -37,6 +37,10 @@ const StepThreeContent = ({ status, disableBack, enableBack }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    if (!IRForm.condition) {
+      setIRForm({ condition: "Unstable" });
+    }
+
     if (isFormValid(fields, IRForm, setErrors)) {
       try {
         setLoading(true);
@@ -83,7 +87,7 @@ const StepThreeContent = ({ status, disableBack, enableBack }) => {
       } catch (error) {
         ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
       } finally {
-        enableBack()
+        enableBack();
         setLoading(false);
       }
     }
