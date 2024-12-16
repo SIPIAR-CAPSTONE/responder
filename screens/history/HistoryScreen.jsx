@@ -24,18 +24,16 @@ const HistoryScreen = () => {
 
   const bottomSheetRef = useRef(null);
   const [showSortSheet, setShowSortSheet] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("date");
+  const [selectedSort, setSelectedSort] = useState("status");
   const closeSortSheet = () => setShowSortSheet(false);
 
   const sortedIReport = joinedData.sort((a, b) => {
     if (selectedSort === "date") {
-      return new Date(a.date) - new Date(b.date);
+      return String(a.date).localeCompare(String(b.date));
     } else if (selectedSort === "address") {
       return a.address > b.address ? 1 : -1;
-    }
-    //TODO: change this to created at later
-    else if (selectedSort === "condition") {
-      return a.condition > b.condition ? 1 : -1;
+    } else if (selectedSort === "status") {
+      return String(b.status).localeCompare(String(a.status));
     }
   });
 
@@ -54,9 +52,10 @@ const HistoryScreen = () => {
         .eq("responder_id", userMetaData["id"]);
 
       if (error) {
-        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        if (!error.message === "TypeError: Network request failed") {
+          ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        }
       } else {
-        console.log("HISTORY - DATA", data);
         // Sort data by created_at
         const sortedData = data.sort(
           (a, b) => new Date(b.date) - new Date(a.date)
@@ -71,7 +70,9 @@ const HistoryScreen = () => {
         setJoinedData(sortedData);
       }
     } catch (error) {
-      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      if (!error.message === "TypeError: Network request failed") {
+        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +93,6 @@ const HistoryScreen = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "BROADCAST" },
         async () => {
-          console.log("NEW INCIDENT - DATA");
           fetchBroadcastData();
         }
       )

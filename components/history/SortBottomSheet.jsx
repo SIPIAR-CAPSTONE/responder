@@ -91,10 +91,10 @@ const stylesheet = createStyleSheet((theme) => ({
 const SORT_OPTIONS = [
   {
     id: 4,
-    title: "Time",
-    value: "created_at",
+    title: "Date",
+    value: "date",
     icon: "clock-time-ten-outline",
   },
   { id: 2, title: "Address", value: "address", icon: "map-marker-minus" },
-  { id: 3, title: "Condition", value: "condition", icon: "heart-pulse" },
+  { id: 3, title: "Status", value: "status", icon: "progress-question" },
 ];

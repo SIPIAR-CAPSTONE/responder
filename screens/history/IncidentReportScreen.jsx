@@ -21,6 +21,10 @@ const StepThreeContent = lazy(() =>
 const IncidentReportScreen = ({ route }) => {
   const { broadcastId, status } = route.params || {};
   const setBroadcastId = useBoundStore((state) => state.setBroadcastId);
+  const [disableBackButton, setDisableBackButton] = useState(false);
+
+  const disableBack = () => setDisableBackButton(true);
+  const enableBack = () => setDisableBackButton(false);
 
   useEffect(() => {
     if (broadcastId) {
@@ -70,7 +74,11 @@ const IncidentReportScreen = ({ route }) => {
       id: 3,
       content: (
         <Content>
-          <StepThreeContent status={status} />
+          <StepThreeContent
+            status={status}
+            disableBack={disableBack}
+            enableBack={enableBack}
+          />
         </Content>
       ),
     },
@@ -93,7 +101,11 @@ const IncidentReportScreen = ({ route }) => {
 
   const CustomAppBar = () => (
     <AppBar style={styles.appBar}>
-      <CircularIcon name="arrow-back" onPress={goBackStep} />
+      <CircularIcon
+        name="arrow-back"
+        onPress={goBackStep}
+        disabled={disableBackButton}
+      />
       <Text style={styles.appBarTitle}>Incident Report</Text>
 
       {/* invisible element, just to make the title center */}

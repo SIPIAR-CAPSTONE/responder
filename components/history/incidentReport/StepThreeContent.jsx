@@ -19,7 +19,7 @@ const fields = [
   { name: "condition", rules: [{ type: "required" }] },
 ];
 
-const StepThreeContent = ({ status }) => {
+const StepThreeContent = ({ status, disableBack, enableBack }) => {
   const { styles, theme } = useStyles(stylesheet);
   const navigation = useNavigation();
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
@@ -40,6 +40,7 @@ const StepThreeContent = ({ status }) => {
     if (isFormValid(fields, IRForm, setErrors)) {
       try {
         setLoading(true);
+        disableBack();
 
         const { error: broadcastUpdateError } = await supabase
           .from("BROADCAST")
@@ -82,6 +83,7 @@ const StepThreeContent = ({ status }) => {
       } catch (error) {
         ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
       } finally {
+        enableBack()
         setLoading(false);
       }
     }

@@ -53,7 +53,7 @@ const MapviewScreen = ({ route }) => {
         <Image source={require("../../assets/MapPin.png")} style={styles.pin} />
       </Marker>
     );
-
+  console.log(routeCoordinates);
   return (
     <>
       <AppBar>
