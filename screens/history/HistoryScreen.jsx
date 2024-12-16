@@ -54,7 +54,9 @@ const HistoryScreen = () => {
         .eq("responder_id", userMetaData["id"]);
 
       if (error) {
-        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        if (!error.message === "TypeError: Network request failed") {
+          ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+        }
       } else {
         console.log("HISTORY - DATA", data);
         // Sort data by created_at
@@ -71,7 +73,9 @@ const HistoryScreen = () => {
         setJoinedData(sortedData);
       }
     } catch (error) {
-      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      if (!error.message === "TypeError: Network request failed") {
+        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+      }
     } finally {
       setLoading(false);
     }

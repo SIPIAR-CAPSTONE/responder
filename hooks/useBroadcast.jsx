@@ -29,10 +29,12 @@ export default function useBroadcast() {
         .neq("status", "Completed");
 
       if (error) {
-        ToastAndroid.show(
-          `Error fetching alerts: ${error?.message}`,
-          ToastAndroid.SHORT
-        );
+        if (!error.message === "TypeError: Network request failed") {
+          ToastAndroid.show(
+            `Error fetching alerts: ${error?.message}`,
+            ToastAndroid.SHORT
+          );
+        }
       }
       if (data?.length > 0) {
         setAssignedEmergencyAlert(data[0]);
@@ -41,10 +43,12 @@ export default function useBroadcast() {
         setAssignedEmergencyAlert({});
       }
     } catch (error) {
-      ToastAndroid.show(
-        `Error fetching alerts: ${error.message}`,
-        ToastAndroid.SHORT
-      );
+      if (!error.message === "TypeError: Network request failed") {
+        ToastAndroid.show(
+          `Error fetching alerts: ${error?.message}`,
+          ToastAndroid.SHORT
+        );
+      }
     } finally {
       setLoading(false);
     }
