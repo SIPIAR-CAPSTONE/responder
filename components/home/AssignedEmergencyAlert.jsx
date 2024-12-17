@@ -137,23 +137,24 @@ export default function AssignedEmergencyAlert() {
         iconColor="#7A288A"
       />
       <View style={styles.buttonsWrapper}>
-        <Button
-          label="View"
-          variant="outlined"
-          style={styles.viewButton}
-          onPress={() =>
-            navigation.navigate("MapViewScreen", {
-              initialOriginCoordinates: userLocation,
-              destinationCoordinates: alertCoordinate,
-            })
-          }
-        />
-        {assignedEmergencyAlert?.status === "Pending" && (
+        {assignedEmergencyAlert?.status === "Pending" || loading ? (
           <Button
             label="Respond Now"
             style={styles.respondNowButton}
             onPress={handleRespondNow}
             isLoading={loading}
+          />
+        ) : (
+          <Button
+            label="View"
+            variant="outlined"
+            style={styles.viewButton}
+            onPress={() =>
+              navigation.navigate("MapViewScreen", {
+                initialOriginCoordinates: userLocation,
+                destinationCoordinates: alertCoordinate,
+              })
+            }
           />
         )}
       </View>

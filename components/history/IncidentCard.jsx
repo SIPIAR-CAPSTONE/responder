@@ -30,7 +30,7 @@ export default function IncidentCard({
     // Format the date part
     const datePart = date.toLocaleDateString("en-PH", {
       weekday: "long",
-      month: "long",
+      month: "numeric",
       day: "numeric",
       year: "numeric",
     });
@@ -78,7 +78,7 @@ export default function IncidentCard({
           {formatDateTime(created_at)}
         </Text>
         <View style={styles.addressContainer}>
-          <View style={styles.container}>
+          <View style={styles.iconContainer}>
             <MaterialIcons name="my-location" size={24} color="blue" />
           </View>
           <View style={styles.addresses}>
@@ -136,16 +136,17 @@ const stylesheet = createStyleSheet((theme) => ({
     flexDirection: "row",
     marginVertical: theme.spacing.xs,
   },
-  addresses: {
-    rowGap: theme.spacing.xxxl,
-  },
-  button: {
-    marginTop: theme.spacing.xxs,
-  },
-  container: {
+  iconContainer: {
     width: 30,
     marginEnd: theme.spacing.xxxs,
     minHeight: 25,
     alignItems: "center",
+  },
+  addresses: {
+    rowGap: theme.spacing.xxxl,
+    flex: 1,
+  },
+  button: {
+    marginTop: theme.spacing.xxs,
   },
 }));

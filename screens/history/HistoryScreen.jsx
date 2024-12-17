@@ -49,7 +49,8 @@ const HistoryScreen = () => {
           *
         )`
         )
-        .eq("responder_id", userMetaData["id"]);
+        .eq("responder_id", userMetaData["id"])
+        .neq("status", "Pending");
 
       if (error) {
         if (!error.message === "TypeError: Network request failed") {

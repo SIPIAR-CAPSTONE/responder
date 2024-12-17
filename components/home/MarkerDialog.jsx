@@ -57,26 +57,6 @@ const MarkerDialog = ({
     [selectedMarker?.date]
   );
 
-  const handleRespondNow = async () => {
-    try {
-      setLoading(true);
-
-      const { error } = await supabase
-        .from("BROADCAST")
-        .update({ status: "On Going" })
-        .eq("broadcast_id", selectedMarker?.broadcast_id);
-
-      if (error) {
-        ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
-      } else {
-      }
-    } catch (error) {
-      ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={hideDialog}>
@@ -124,16 +104,6 @@ const MarkerDialog = ({
           <Button onPress={hideDialog} mode="text" rippleColor="rgba(0,0,0,0)">
             Close
           </Button>
-          {selectedMarker?.status === "Pending" && (
-            <Button
-              onPress={handleRespondNow}
-              mode="contained"
-              style={styles.respondNowButton}
-              loading={loading}
-            >
-              Respond Now
-            </Button>
-          )}
         </Dialog.Actions>
       </Dialog>
     </Portal>
