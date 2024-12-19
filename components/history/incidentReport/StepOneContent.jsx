@@ -39,7 +39,6 @@ const StepOneContent = ({ goNextStep }) => {
       <FormHeader
         title={IRForm?.address}
         date={formattedDate}
-        id={broadcastId}
       />
       <SectionTitle title="Incident Details" />
       <TextInput

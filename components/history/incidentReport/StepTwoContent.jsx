@@ -52,7 +52,6 @@ const StepTwoContent = ({ goNextStep }) => {
       <FormHeader
         title={IRForm?.address}
         date={formattedDate}
-        id={broadcastId}
       />
       <SectionTitle title="Bystander Information" />
       <TextInput
@@ -62,8 +61,6 @@ const StepTwoContent = ({ goNextStep }) => {
         error={errors.bystanderName}
         variant="disabled"
         disabled
-        variant="disabled"
-        disabled
       />
       <TextInput
         label="Contact Number"
@@ -71,8 +68,6 @@ const StepTwoContent = ({ goNextStep }) => {
         value={IRForm.phone}
         onChangeText={(value) => setIRForm({ phone: value })}
         error={errors.phone}
-        variant="disabled"
-        disabled
         variant="disabled"
         disabled
       />
