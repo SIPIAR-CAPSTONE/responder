@@ -85,8 +85,7 @@ async function registerForPushNotificationsAsync() {
 
 export default function Push() {
   const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] =
-    (useState < Notifications.Notification) | (undefined > undefined);
+  const [notification, setNotification] = useState(Notifications.Notification);
   const notificationListener = useRef();
   const responseListener = useRef();
 
