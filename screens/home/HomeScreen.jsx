@@ -3,6 +3,7 @@ import Layout from "../../components/common/Layout";
 import AppBar from "../../components/ui/AppBar";
 import LogoTitle from "../../components/navigation/LogoTitle";
 import AssignedEmergencyAlert from "../../components/home/AssignedEmergencyAlert";
+import Push from "../../components/notification/Push";
 
 const HomeScreen = () => {
   const CustomAppBar = () => (
@@ -28,6 +29,7 @@ const HomeScreen = () => {
         Assigned Emergency Alert
       </Text>
       <AssignedEmergencyAlert />
+      <Push />
     </Layout>
   );
 };
