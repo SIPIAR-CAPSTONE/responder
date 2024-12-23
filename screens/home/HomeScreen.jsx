@@ -3,9 +3,13 @@ import Layout from "../../components/common/Layout";
 import AppBar from "../../components/ui/AppBar";
 import LogoTitle from "../../components/navigation/LogoTitle";
 import AssignedEmergencyAlert from "../../components/home/AssignedEmergencyAlert";
-import Push from "../../components/notification/Push";
+import useBoundStore from "../../zustand/useBoundStore";
+import usePushNotification from "../../hooks/usePushNotification";
 
 const HomeScreen = () => {
+  const session = useBoundStore((state) => state.session);
+  usePushNotification({ userId: session?.user.id });
+
   const CustomAppBar = () => (
     <AppBar>
       <LogoTitle />
@@ -29,7 +33,6 @@ const HomeScreen = () => {
         Assigned Emergency Alert
       </Text>
       <AssignedEmergencyAlert />
-      <Push />
     </Layout>
   );
 };
