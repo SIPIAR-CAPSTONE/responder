@@ -98,7 +98,6 @@ const StepThreeContent = ({ status, disableBack, enableBack }) => {
       <FormHeader
         title={IRForm?.address}
         date={formattedDate}
-        id={broadcastId}
       />
       <SectionTitle title="Remarks" />
       <TextInput

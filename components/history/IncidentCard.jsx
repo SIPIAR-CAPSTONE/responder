@@ -9,7 +9,6 @@ import useBoundStore from "../../zustand/useBoundStore";
 
 export default function IncidentCard({
   broadcastId,
-  incident_id,
   address,
   barangay,
   landmark,
@@ -71,9 +70,14 @@ export default function IncidentCard({
         />
       </View>
       <View style={styles.rightColumn}>
-        <Text style={styles.id} variant="labelLarge">
-          Incident ID: {incident_id}
-        </Text>
+        <View style={styles.bystanderContainer}>
+          <Text style={styles.bystanderLabel} variant="labelMedium">
+            Bystander:
+          </Text>
+          <Text style={styles.bystander} variant="titleSmall">
+            {`${first_name} ${last_name}`}
+          </Text>
+        </View>
         <Text style={styles.date} variant="bodyMedium">
           {formatDateTime(created_at)}
         </Text>
@@ -125,9 +129,19 @@ const stylesheet = createStyleSheet((theme) => ({
     flex: 1,
     rowGap: theme.spacing.xxxs,
   },
-  id: {
+  bystanderContainer: {
+    flexDirection: "row",
+    gap: theme.spacing.xxxs,
+    alignItems: "center",
+  },
+  bystanderLabel: {
+    color: theme.colors.text2,
+    marginTop: 7,
+  },
+  bystander: {
     color: theme.colors.primary,
     fontWeight: "bold",
+    marginTop: 7,
   },
   date: {
     color: theme.colors.text2,

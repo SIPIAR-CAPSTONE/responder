@@ -39,3 +39,6 @@ yarn-error.*
 
 # JSON formatter
 jsonformatter
+
+google-services.json
+google-services.json.base64

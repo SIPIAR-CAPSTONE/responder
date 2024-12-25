@@ -128,7 +128,6 @@ const HistoryScreen = () => {
         renderItem={({ item }) => (
           <IncidentCard
             broadcastId={item.broadcast_id}
-            incident_id={item.broadcast_id}
             address={item.address}
             barangay={item.barangay}
             landmark={item.landmark}

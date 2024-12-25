@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+     "eas-build-pre-install": "echo $GOOGLE_SERVICES_JSON | base64 -d > google-services.json"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.6.4",
@@ -51,7 +52,10 @@
     "react-native-vector-icons": "^10.2.0",
     "source-map-loader": "^5.0.0",
     "typescript": "~5.3.3",
-    "zustand": "^5.0.0-rc.2"
+    "zustand": "^5.0.0-rc.2",
+    "expo-notifications": "~0.28.19",
+    "expo-device": "~6.0.2",
+    "expo-constants": "~16.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
