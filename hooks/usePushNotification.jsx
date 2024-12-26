@@ -98,7 +98,7 @@ export default function usePushNotification({ userId }) {
 
         await supabase
           .from("USER")
-          .upsert({ id: userId, expo_push_token: token });
+          .upsert({ user_id: userId, expo_push_token: token });
       })
       .catch((error) => setExpoPushToken(`${error}`));
 
