@@ -5,10 +5,12 @@ import HistoryScreen from "../screens/history/HistoryScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 import TabBarIcon from "../components/navigation/TabBarIcon";
 import { createStyleSheet, useStyles } from "../hooks/useStyles";
+import useActivityTracker from "../hooks/useActivityTracker";
 
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
+  useActivityTracker();
   const { theme, styles } = useStyles(stylesheet);
 
   const screenOptions = {

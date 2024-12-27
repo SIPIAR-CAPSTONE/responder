@@ -142,7 +142,6 @@ const ProfileScreen = () => {
           selectedValue={currentThemeScheme}
           setSelectedValue={handleChangeTheme}
         />
-        {/*================================*/}
         <ListItem
           size="medium"
           title="Sign Out"
