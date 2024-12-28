@@ -7,7 +7,7 @@ import moment from "moment";
 export default function useActivityTracker() {
   const { userLocation, loading } = useLocation();
   const session = useBoundStore((state) => state.session);
-  const userId = session?.user.id;
+  const userId = session?.user?.id;
 
   const updateActivity = async () => {
     if (!session || !userId || loading || !userLocation) return;

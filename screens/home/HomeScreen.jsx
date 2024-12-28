@@ -8,7 +8,7 @@ import usePushNotification from "../../hooks/usePushNotification";
 
 const HomeScreen = () => {
   const session = useBoundStore((state) => state.session);
-  usePushNotification({ userId: session?.user.id });
+  usePushNotification({ userId: session?.user?.id });
 
   const CustomAppBar = () => (
     <AppBar>
